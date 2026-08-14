@@ -6,6 +6,8 @@
     <PackageTags>testing;integration-tests;testcontainers;postgresql;webapplicationfactory;xunit;building-blocks</PackageTags>
     <!-- Override the inherited net8.0;net9.0: Microsoft.AspNetCore.Mvc.Testing 9.0.0 ships net9-only assets. -->
     <TargetFrameworks>net9.0</TargetFrameworks>
+    <!-- Shipped test-helper LIBRARY, not a test suite: stop `dotnet test` from launching a testhost on it. -->
+    <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>

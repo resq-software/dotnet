@@ -107,6 +107,11 @@ jobs:
         run: |
           [ -f nuget.config ] || dotnet new nugetconfig
           dotnet nuget add source "$RUNNER_TEMP/local-nuget" --name local-buildingblocks --configfile nuget.config
+          # The template pins ResQ.BuildingBlocks.* at their published version; repoint them at the
+          # locally-packed CI version so restore resolves off the temp feed. That version is not on
+          # nuget.org, so there is no ambiguity with the public packages (and none of the new adapter
+          # packages are published yet).
+          sed -i -E "s|(Include=\"ResQ\.BuildingBlocks\.[A-Za-z.]+\" Version=)\"[^\"]*\"|\1\"$PKG_VERSION\"|g" Directory.Packages.props
           dotnet restore
           dotnet build --no-restore -c Release
           dotnet test --no-build -c Release --filter "Category!=Integration"

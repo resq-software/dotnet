@@ -4,6 +4,8 @@
     <PackageId>ResQ.BuildingBlocks.Testing</PackageId>
     <Description>Lightweight, dependency-free test doubles for the ResQ building blocks — deterministic clock, unit-of-work fakes, recording dispatchers/publishers, a fluent test-data Builder, capturing/xUnit logger providers, hexagon dependency-rule data, and a one-call test-double registration helper. No Docker or ASP.NET; safe for any unit-test project.</Description>
     <PackageTags>testing;test-doubles;fakes;xunit;fluentassertions;nsubstitute;hexagonal;building-blocks</PackageTags>
+    <!-- Shipped test-helper LIBRARY, not a test suite: stop `dotnet test` from launching a testhost on it. -->
+    <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
