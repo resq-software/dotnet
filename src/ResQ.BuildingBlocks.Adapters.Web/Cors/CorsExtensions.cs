@@ -45,7 +45,7 @@ public static class CorsExtensions
         ArgumentNullException.ThrowIfNull(configuration);
 
         var options = configuration.GetSection(SectionName).Get<ResqCorsOptions>() ?? new ResqCorsOptions();
-        var hasWildcard = Array.Exists(options.AllowedOrigins, static o => o == "*");
+        var hasWildcard = Array.Exists(options.AllowedOrigins, static o => string.Equals(o, "*", StringComparison.Ordinal));
 
         if (hasWildcard && options.AllowCredentials)
         {

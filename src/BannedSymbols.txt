@@ -1,0 +1,19 @@
+# Banned APIs for the ResQ building blocks (Microsoft.CodeAnalysis.BannedApiAnalyzers, RS0030).
+# Format: <DocumentationId>;<Message>. Wired as an AdditionalFile in src/Directory.Build.props.
+
+# Non-deterministic wall clock: inject IClock / TimeProvider so time is testable.
+P:System.DateTimeOffset.UtcNow;Inject IClock (or TimeProvider) instead of reading the ambient clock.
+P:System.DateTimeOffset.Now;Inject IClock (or TimeProvider) and use UTC instead of the local clock.
+
+# Libraries must not write to the console; log through ILogger.
+T:System.Console;Building-block libraries must not write to the console; use ILogger.
+
+# Sync-over-async blocking deadlocks and starves the thread pool: await instead.
+P:System.Threading.Tasks.Task`1.Result;Sync-over-async: await the task instead of blocking on .Result.
+M:System.Threading.Tasks.Task.Wait;Sync-over-async: await the task instead of blocking on .Wait().
+
+# JSON is System.Text.Json across the stack; do not pull in Newtonsoft.
+T:Newtonsoft.Json.JsonConvert;Use System.Text.Json, not Newtonsoft.Json.
+
+# BinaryFormatter is insecure (arbitrary code execution) and removed from modern .NET.
+T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter;BinaryFormatter is insecure; do not use it.

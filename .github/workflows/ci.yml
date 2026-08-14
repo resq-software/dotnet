@@ -55,6 +55,17 @@ jobs:
       - run: dotnet pack ResQ.BuildingBlocks.slnx -c Release -o artifacts
       - name: Pack the dotnet-new template package
         run: dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o artifacts
+      - name: Validate packages (metadata, SourceLink, deterministic build)
+        # dotnet-validate takes one .nupkg at a time, so loop; the default bash -eo pipefail
+        # aborts the step on the first failure. Determinism passes because this job runs with
+        # CI=true, which turns on ContinuousIntegrationBuild via Directory.Build.props.
+        run: |
+          dotnet tool restore
+          for pkg in artifacts/*.nupkg; do
+            echo "::group::validate $pkg"
+            dotnet validate package local "$pkg"
+            echo "::endgroup::"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: nuget

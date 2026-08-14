@@ -11,7 +11,12 @@ public abstract record IntegrationEvent
     public Guid Id { get; init; } = Guid.NewGuid();
 
     /// <summary>When the event occurred (UTC).</summary>
+#pragma warning disable RS0030 // Banned API: DateTimeOffset.UtcNow.
+    // Legitimate use: this is the record's default-value initializer for a fact's occurrence time,
+    // evaluated once at construction where no IClock is in scope (property initializers cannot take a
+    // dependency). Callers that need deterministic time set OccurredOnUtc explicitly via 'with'.
     public DateTimeOffset OccurredOnUtc { get; init; } = DateTimeOffset.UtcNow;
+#pragma warning restore RS0030
 
     /// <summary>The logical event type name used for routing and type resolution.</summary>
     public virtual string EventType => GetType().Name;

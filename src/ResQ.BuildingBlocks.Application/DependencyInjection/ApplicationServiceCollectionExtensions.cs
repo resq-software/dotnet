@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ public static class ApplicationServiceCollectionExtensions
     /// <param name="services">The service collection.</param>
     /// <param name="assemblies">The assemblies to scan for handler implementations.</param>
     /// <returns>The same <paramref name="services"/> for chaining.</returns>
+    [RequiresUnreferencedCode("Scans assemblies for CQRS and domain-event handler implementations; their types must be preserved when trimming.")]
     public static IServiceCollection AddResqApplication(this IServiceCollection services, params Assembly[] assemblies)
     {
         ArgumentNullException.ThrowIfNull(services);

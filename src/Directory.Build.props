@@ -14,12 +14,29 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- Catch accidental public-API / TFM-compat breaks at pack time (baseline deferred to post-1.0). -->
+    <EnablePackageValidation>true</EnablePackageValidation>
   </PropertyGroup>
 
   <!-- Shared build-time dependencies applied to every library (versions in Directory.Packages.props). -->
   <ItemGroup>
     <PackageReference Include="MinVer" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+
+    <!-- Dev-only analyzers: PrivateAssets="all" keeps them out of the produced packages, so consumers,
+         tests, and samples stay quiet while the building blocks themselves are held to the bar. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+    <PackageReference Include="Meziantou.Analyzer" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Analyzer inputs. BannedSymbols.txt is shared across src; the PublicAPI.*.txt pair is per project
+       (each library baselines its own declared surface). -->
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)BannedSymbols.txt" />
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
   <!-- Ship each project's README.md into its NuGet package. -->

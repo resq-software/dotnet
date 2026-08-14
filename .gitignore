@@ -10,6 +10,9 @@ artifacts/
 *.nupkg
 *.snupkg
 .nuget/
+# Lock files intentionally not used: floating SDK (global.json rollForward=latestMajor) drifts
+# SDK-bundled packages (Microsoft.NET.ILLink.Tasks), which breaks locked-mode restore across SDK patches.
+packages.lock.json
 
 # Rider / VS / VS Code
 .idea/

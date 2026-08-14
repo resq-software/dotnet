@@ -9,7 +9,9 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
 
-    <!-- Deterministic, reproducible builds (CI sets ContinuousIntegrationBuild=true). -->
+    <!-- Deterministic, reproducible builds. ContinuousIntegrationBuild is turned on in CI by the
+         $(CI)-gated PropertyGroup below (normalizes embedded/SourceLink paths); it is intentionally
+         left off for local builds so IDE/incremental builds keep machine-local paths. -->
     <Deterministic>true</Deterministic>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
@@ -29,6 +31,13 @@
     <RepositoryUrl>https://github.com/resq-software/dotnet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>resq;clean-architecture;hexagonal;ddd;cqrs;building-blocks</PackageTags>
+  </PropertyGroup>
+
+  <!-- CI-only: ContinuousIntegrationBuild normalizes source paths for deterministic, SourceLink-correct
+       output (GitHub Actions and most CI providers export CI=true). Off locally so IDE/incremental builds
+       keep machine-local paths. -->
+  <PropertyGroup Condition="'$(CI)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
 </Project>

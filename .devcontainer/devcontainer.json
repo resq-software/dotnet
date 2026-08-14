@@ -1,0 +1,26 @@
+{
+  // Reproducible dev environment for ResQ.BuildingBlocks.
+  // The SDK image is pinned by digest so every contributor and Codespace resolves the exact same
+  // toolchain (the :9.0 tag floats; the @sha256 pin does not). global.json's rollForward=latestMajor
+  // means the 9.0.x SDK in this image satisfies the 9.0.100 floor.
+  "name": "ResQ Building Blocks",
+  "image": "mcr.microsoft.com/dotnet/sdk:9.0@sha256:35048e3a81e6a07c316e7bbbd80d80d2ba705fe5f23a8ed42b6638c8f4c20d30",
+
+  "features": {
+    // gh CLI for PRs / release ops from inside the container.
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  // Restore the pinned local tools (dotnet-validate) and the solution's locked package graph so the
+  // container is build-ready on first attach.
+  "postCreateCommand": "dotnet tool restore && dotnet restore ResQ.BuildingBlocks.slnx",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "editorconfig.editorconfig"
+      ]
+    }
+  }
+}
