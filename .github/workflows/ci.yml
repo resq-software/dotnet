@@ -1,3 +1,14 @@
+# Copyright 2026 ResQ Software
+# SPDX-License-Identifier: Apache-2.0
+#
+# Thin CI wrapper (mirrors resq-software/dotnet-sdk). The `gates` job
+# dispatches to the org-wide reusable `required` aggregator in
+# resq-software/.github (dotnet-ci: restore/build/format/test, plus the
+# security scan + CodeQL + repo-standards). The top-level `required`
+# job emits the status-check context consumed by the org ruleset
+# `default-branch-baseline`, and additionally gates this repo's
+# NuGet pack and dotnet-new template smoke.
+
 name: CI
 
 on:
@@ -5,7 +16,6 @@ on:
     branches: [main]
     tags: ["v*"]
   pull_request:
-    branches: [main]
 
 permissions:
   contents: read
@@ -14,114 +24,114 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  DOTNET_NOLOGO: "true"
-  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
-  Configuration: Release
-
 jobs:
-  build:
-    name: Build · Test · Pack
+  gates:
+    # Job-scoped permissions: CodeQL needs security-events:write to upload
+    # SARIF; PR metadata read is needed by some scanners. Keeping the
+    # workflow-level grant at contents:read avoids blanket write tokens.
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: read
+      actions: read
+    uses: resq-software/.github/.github/workflows/required.yml@f4b51a620aa1bf89c0bce4f434b36f92ff7d517d
+    with:
+      lang: dotnet
+      dotnet-solution: ResQ.BuildingBlocks.slnx
+      codeql-languages: '["csharp"]'
+
+  # Repo-specific: verify all eight building-block packages + the template
+  # pack cleanly, and publish the artifacts for inspection.
+  pack:
+    name: Pack
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # MinVer needs full history + tags for versioning
-
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-
-      - run: dotnet restore
-      - run: dotnet build --no-restore -c Release
-      # Exclude the Docker-dependent integration suite here — it runs in the
-      # integration-tests job below where a Docker daemon is available.
-      - run: dotnet test --no-build -c Release --verbosity normal --filter "Category!=Integration"
-      # Packs the 8 building-block libraries (samples are IsPackable=false).
-      - run: dotnet pack --no-build -c Release -o artifacts
-      # The dotnet-new template pack is excluded from the solution, so pack it here
-      # too — the uploaded artifact set is then the 8 libraries + the template.
+      - run: dotnet pack ResQ.BuildingBlocks.slnx -c Release -o artifacts
       - name: Pack the dotnet-new template package
         run: dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o artifacts
-
       - uses: actions/upload-artifact@v4
         with:
           name: nuget
           path: artifacts/*.nupkg
 
-  integration-tests:
-    name: Integration Tests (Docker)
-    runs-on: ubuntu-latest # GitHub-hosted ubuntu runners ship a running Docker daemon for Testcontainers
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # MinVer needs full history + tags for versioning
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: global.json
-
-      - run: dotnet restore
-      - run: dotnet build --no-restore -c Release
-      # Only the Docker-backed suite; PostgresContainerFixture et al. gate on Docker availability.
-      - run: dotnet test --no-build -c Release --verbosity normal --filter "Category=Integration"
-
-  template-validation:
+  # Repo-specific: generate a service from the template and build/test it
+  # against the locally-packed building blocks on a temp NuGet source.
+  template-smoke:
     name: Template Smoke (dotnet new)
     runs-on: ubuntu-latest
     env:
-      # Deterministic version shared by the locally-packed building blocks and the
-      # template, so the generated service restores them off the temp NuGet source.
+      # Deterministic version shared by the locally-packed building blocks and
+      # the generated service, so it restores them off the temp NuGet source.
       PKG_VERSION: 0.0.0-ci
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # MinVer needs full history + tags for versioning
-
+          fetch-depth: 0
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-
-      # 1) Pack the 8 building-block packages into a temp NuGet source — a fresh
-      #    service references ResQ.BuildingBlocks.* by PackageReference, and those
-      #    versions are not on nuget.org yet.
       - name: Pack building blocks to a local feed
-        # MinVer derives Version from git height and overrides -p:Version; MinVerVersionOverride is its
-        # documented escape hatch, so the packed feed is deterministically $PKG_VERSION (matching the
-        # version the generated service is repointed to below).
+        # MinVer derives Version from git height and overrides -p:Version;
+        # MinVerVersionOverride is its escape hatch, so the feed is exactly
+        # $PKG_VERSION (matching the version the generated service is repinned to).
         run: dotnet pack -c Release -o "$RUNNER_TEMP/local-nuget" -p:MinVerVersionOverride="$PKG_VERSION"
-
-      # 2) Pack the dotnet-new template package (excluded from the solution build).
       - name: Pack the template package
-        run: dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o "$RUNNER_TEMP/template-pkg" -p:Version="$PKG_VERSION"
-
-      # 3) Install the packed template, then generate a service from it.
+        run: dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o "$RUNNER_TEMP/template-pkg" -p:MinVerVersionOverride="$PKG_VERSION"
       - name: Install template
         run: dotnet new install "$RUNNER_TEMP"/template-pkg/ResQ.BuildingBlocks.Templates.*.nupkg
-
       - name: Generate a service from the template
         run: dotnet new resq-service -n Smoke -o "$RUNNER_TEMP/Smoke"
-
-      # 4) Build + test the generated output against the locally-packed building
-      #    blocks on the temp NuGet source.
       - name: Build & test the generated service
         working-directory: ${{ runner.temp }}/Smoke
         run: |
           [ -f nuget.config ] || dotnet new nugetconfig
           dotnet nuget add source "$RUNNER_TEMP/local-nuget" --name local-buildingblocks --configfile nuget.config
-          # The template pins ResQ.BuildingBlocks.* at their published version; repoint them at the
-          # locally-packed CI version so restore resolves off the temp feed. That version is not on
-          # nuget.org, so there is no ambiguity with the public packages (and none of the new adapter
-          # packages are published yet).
+          # Repoint the template's ResQ.BuildingBlocks.* pins at the locally-packed
+          # CI version so restore resolves off the temp feed (that version is not on
+          # nuget.org, so there is no ambiguity with the published packages).
           sed -i -E "s|(Include=\"ResQ\.BuildingBlocks\.[A-Za-z.]+\" Version=)\"[^\"]*\"|\1\"$PKG_VERSION\"|g" Directory.Packages.props
           dotnet restore
           dotnet build --no-restore -c Release
           dotnet test --no-build -c Release --filter "Category!=Integration"
 
+  # Single status-check context the org ruleset requires. Also gates the
+  # repo-specific pack + template smoke so a failure in either blocks merge.
+  required:
+    name: required
+    runs-on: ubuntu-latest
+    needs: [gates, pack, template-smoke]
+    if: always()
+    steps:
+      - name: Evaluate upstream results
+        env:
+          GATES: ${{ needs.gates.result }}
+          PACK: ${{ needs.pack.result }}
+          TEMPLATE: ${{ needs.template-smoke.result }}
+        run: |
+          set -eu
+          fail=0
+          for kv in "gates=$GATES" "pack=$PACK" "template-smoke=$TEMPLATE"; do
+            name=${kv%%=*}
+            res=${kv#*=}
+            case "$res" in
+              success | skipped | "") echo "ok: $name=$res" ;;
+              *)
+                echo "::error::$name returned: $res"
+                fail=1
+                ;;
+            esac
+          done
+          [ "$fail" = 0 ] || exit 1
+
   publish:
     name: Publish to NuGet
-    needs: build
+    needs: [required]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     environment: nuget
