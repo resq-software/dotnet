@@ -25,7 +25,7 @@ public sealed class WidgetEndpoints : IEndpoint
         CreateWidgetRequest request, ISender sender, CancellationToken cancellationToken)
     {
         var result = await sender.Send(request.ToCommand(), cancellationToken);
-        return result.ToHttpResult(id => TypedResults.Created($"/api/widgets/{id}", id));
+        return result.ToHttpResult(id => TypedResults.Created($"/api/v1/widgets/{id}", id));
     }
 
     private static async Task<IResult> GetWidgetAsync(Guid id, ISender sender, CancellationToken cancellationToken)

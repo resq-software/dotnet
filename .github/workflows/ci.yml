@@ -87,7 +87,10 @@ jobs:
       #    service references ResQ.BuildingBlocks.* by PackageReference, and those
       #    versions are not on nuget.org yet.
       - name: Pack building blocks to a local feed
-        run: dotnet pack -c Release -o "$RUNNER_TEMP/local-nuget" -p:Version="$PKG_VERSION"
+        # MinVer derives Version from git height and overrides -p:Version; MinVerVersionOverride is its
+        # documented escape hatch, so the packed feed is deterministically $PKG_VERSION (matching the
+        # version the generated service is repointed to below).
+        run: dotnet pack -c Release -o "$RUNNER_TEMP/local-nuget" -p:MinVerVersionOverride="$PKG_VERSION"
 
       # 2) Pack the dotnet-new template package (excluded from the solution build).
       - name: Pack the template package

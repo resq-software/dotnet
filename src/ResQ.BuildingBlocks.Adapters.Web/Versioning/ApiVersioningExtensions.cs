@@ -62,6 +62,8 @@ public static class ApiVersioningExtensions
     {
         ArgumentNullException.ThrowIfNull(app);
 
-        return app.MapGroup(prefix).WithApiVersionSet(set);
+        // The version segment must be in the route template for UrlSegmentApiVersionReader to bind it,
+        // e.g. "/api" + v1.0 => "/api/v1/...". Without it no versioned route matches (404).
+        return app.MapGroup($"{prefix}/v{{version:apiVersion}}").WithApiVersionSet(set);
     }
 }

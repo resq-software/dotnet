@@ -18,11 +18,18 @@ public static class WebServiceCollectionExtensions
     /// <param name="services">The service collection.</param>
     /// <param name="configuration">The configuration (used for the CORS allowlist).</param>
     /// <param name="configure">Optional hook to customize <see cref="ResqWebOptions"/>.</param>
+    /// <param name="endpointAssemblies">
+    /// Assemblies to scan for <see cref="IEndpoint"/> implementations. Pass the API's own assembly
+    /// (e.g. <c>typeof(Program).Assembly</c>) — this is required under <c>WebApplicationFactory</c>/test
+    /// hosts, where <see cref="Assembly.GetEntryAssembly"/> resolves to the test runner rather than the
+    /// API. When none are supplied, the entry assembly is used (correct for a plain <c>dotnet run</c>).
+    /// </param>
     /// <returns>The same service collection for chaining.</returns>
     public static IServiceCollection AddResqWeb(
         this IServiceCollection services,
         IConfiguration configuration,
-        Action<ResqWebOptions>? configure = null)
+        Action<ResqWebOptions>? configure = null,
+        params Assembly[] endpointAssemblies)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
@@ -50,10 +57,18 @@ public static class WebServiceCollectionExtensions
         services.AddAuthentication();
         services.AddAuthorization();
 
-        var entryAssembly = Assembly.GetEntryAssembly();
-        if (entryAssembly is not null)
+        // Prefer the assemblies the caller names; Assembly.GetEntryAssembly() is unreliable under
+        // WebApplicationFactory/test hosts (it returns the test runner). Fall back to the entry
+        // assembly for a plain `dotnet run`.
+        var scanTargets = endpointAssemblies.Length > 0
+            ? endpointAssemblies
+            : Assembly.GetEntryAssembly() is { } entry
+                ? [entry]
+                : Array.Empty<Assembly>();
+
+        if (scanTargets.Length > 0)
         {
-            services.AddResqEndpoints(entryAssembly);
+            services.AddResqEndpoints(scanTargets);
         }
 
         return services;

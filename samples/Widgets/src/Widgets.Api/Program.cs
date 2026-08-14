@@ -20,7 +20,9 @@ builder.Services
 // transaction behavior (which AddWidgetsInfrastructure registers last = innermost).
 builder.Services.AddResqObservabilityBehaviors();
 
-builder.Services.AddResqWeb(builder.Configuration);
+// Pass this API's assembly so endpoint discovery works under WebApplicationFactory (integration tests),
+// where Assembly.GetEntryAssembly() would otherwise resolve to the test runner.
+builder.Services.AddResqWeb(builder.Configuration, endpointAssemblies: typeof(Program).Assembly);
 builder.Services.AddWidgetsInfrastructure(builder.Configuration);
 
 var app = builder.Build();

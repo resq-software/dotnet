@@ -49,7 +49,7 @@ public sealed class SampleApiTests(PostgresContainerFixture fixture) : IAsyncLif
         using var client = _factory.CreateClient();
 
         // Act — create
-        var created = await client.PostAsJsonAsync("/api/samples", new { Name = "Gadget", Quantity = 7 });
+        var created = await client.PostAsJsonAsync("/api/v1/samples", new { Name = "Gadget", Quantity = 7 });
 
         // Assert — create
         created.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -57,7 +57,7 @@ public sealed class SampleApiTests(PostgresContainerFixture fixture) : IAsyncLif
         id.Should().NotBeEmpty();
 
         // Act — read back
-        var fetched = await client.GetAsync($"/api/samples/{id}");
+        var fetched = await client.GetAsync($"/api/v1/samples/{id}");
 
         // Assert — read back
         fetched.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -75,7 +75,7 @@ public sealed class SampleApiTests(PostgresContainerFixture fixture) : IAsyncLif
         using var client = _factory.CreateClient();
 
         // Act
-        var response = await client.PostAsJsonAsync("/api/samples", new { Name = "", Quantity = -3 });
+        var response = await client.PostAsJsonAsync("/api/v1/samples", new { Name = "", Quantity = -3 });
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

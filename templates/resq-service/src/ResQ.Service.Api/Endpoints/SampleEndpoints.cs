@@ -25,7 +25,7 @@ public sealed class SampleEndpoints : IEndpoint
         CreateSampleRequest request, ISender sender, CancellationToken cancellationToken)
     {
         var result = await sender.Send(request.ToCommand(), cancellationToken);
-        return result.ToHttpResult(id => TypedResults.Created($"/api/samples/{id}", id));
+        return result.ToHttpResult(id => TypedResults.Created($"/api/v1/samples/{id}", id));
     }
 
     private static async Task<IResult> GetSampleAsync(Guid id, ISender sender, CancellationToken cancellationToken)
