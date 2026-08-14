@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using ResQ.BuildingBlocks.Application;
 
@@ -21,6 +22,7 @@ public sealed class SystemTextJsonMessageSerializer(JsonSerializerOptions? optio
     /// <param name="value">The value to serialize.</param>
     /// <param name="type">The declared type to serialize as.</param>
     /// <returns>The UTF-8 encoded JSON payload.</returns>
+    [RequiresDynamicCode("Uses reflection-based System.Text.Json serialization (no source-generated context).")]
     public byte[] Serialize(object value, Type type)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -32,6 +34,7 @@ public sealed class SystemTextJsonMessageSerializer(JsonSerializerOptions? optio
     /// <param name="data">The serialized payload.</param>
     /// <param name="type">The target CLR type.</param>
     /// <returns>The deserialized instance, or <see langword="null"/>.</returns>
+    [RequiresDynamicCode("Uses reflection-based System.Text.Json deserialization (no source-generated context).")]
     public object? Deserialize(ReadOnlySpan<byte> data, Type type)
     {
         ArgumentNullException.ThrowIfNull(type);

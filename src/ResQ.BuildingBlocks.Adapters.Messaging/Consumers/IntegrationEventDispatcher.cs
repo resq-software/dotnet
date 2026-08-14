@@ -28,6 +28,7 @@ public sealed class IntegrationEventDispatcher(
     /// <exception cref="InvalidOperationException">
     /// The message type is not registered, or its body could not be deserialized.
     /// </exception>
+    [RequiresDynamicCode("Builds a closed generic handler invoker per event CLR type via MakeGenericType.")]
     public async Task DispatchAsync(MessageEnvelope message, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(message);

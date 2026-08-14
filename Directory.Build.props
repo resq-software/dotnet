@@ -9,9 +9,16 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
 
-    <!-- Deterministic, reproducible builds (CI sets ContinuousIntegrationBuild=true). -->
+    <!-- Deterministic, reproducible builds. ContinuousIntegrationBuild is turned on in CI by the
+         $(CI)-gated PropertyGroup below (normalizes embedded/SourceLink paths); it is intentionally
+         left off for local builds so IDE/incremental builds keep machine-local paths. -->
     <Deterministic>true</Deterministic>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <!-- Reproducible restore: pin the full transitive dependency graph (including analyzers) into a
+         packages.lock.json committed next to each project. CI additionally enforces locked mode (see
+         the $(CI) group below) so a drifted graph fails restore instead of silently relocking. -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 
     <!-- Build DX + supply-chain audit (mirrors dotnet-sdk). -->
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
@@ -29,6 +36,16 @@
     <RepositoryUrl>https://github.com/resq-software/dotnet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>resq;clean-architecture;hexagonal;ddd;cqrs;building-blocks</PackageTags>
+  </PropertyGroup>
+
+  <!-- CI-only hardening (GitHub Actions and most CI providers export CI=true):
+         - ContinuousIntegrationBuild normalizes source paths for deterministic, SourceLink-correct output.
+         - RestoreLockedMode makes restore fail if the committed packages.lock.json no longer matches the
+           resolved graph, instead of silently updating it — so dependency drift is caught in CI.
+       Both are intentionally off locally so contributors can regenerate lock files by simply restoring. -->
+  <PropertyGroup Condition="'$(CI)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <RestoreLockedMode>true</RestoreLockedMode>
   </PropertyGroup>
 
 </Project>

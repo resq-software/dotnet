@@ -41,15 +41,17 @@ public sealed class TransactionBehavior<TRequest, TResponse>(
         {
             // 'await using' rolls the transaction back on dispose if CommitAsync was not reached,
             // so an exception thrown by the handler unwinds cleanly without an explicit catch.
-            await using var transaction = await dbContext.Database
+            var transaction = await dbContext.Database
                 .BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+            await using (transaction.ConfigureAwait(false))
+            {
+                logger.LogDebug("Opened transaction for {Request}", requestName);
+                var response = await next().ConfigureAwait(false);
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                logger.LogDebug("Committed transaction for {Request}", requestName);
 
-            logger.LogDebug("Opened transaction for {Request}", requestName);
-            var response = await next().ConfigureAwait(false);
-            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-            logger.LogDebug("Committed transaction for {Request}", requestName);
-
-            return response;
+                return response;
+            }
         }).ConfigureAwait(false);
     }
 }

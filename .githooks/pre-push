@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+#
+# ResQ.BuildingBlocks pre-push hook.
+#
+# NOT enabled automatically. Opt in once per clone:
+#     git config core.hooksPath .githooks
+# Bypass for a single push (e.g. an intentional maintainer force-push):
+#     GIT_HOOKS_SKIP=1 git push ...
+#
+# What it does:
+#   1. Blocks a force-push (non-fast-forward) to main — protects shared history.
+#   2. Verifies formatting with `dotnet format --verify-no-changes` (no restore).
+#   3. When any *.cs file changed in the pushed range, does a clean `dotnet build`.
+#
+set -euo pipefail
+
+if [ "${GIT_HOOKS_SKIP:-}" = "1" ]; then
+  echo "pre-push: skipped (GIT_HOOKS_SKIP=1)"
+  exit 0
+fi
+
+readonly PROTECTED_REF="refs/heads/main"
+readonly ZERO="0000000000000000000000000000000000000000"
+readonly SOLUTION="ResQ.BuildingBlocks.slnx"
+
+force_to_main=0
+cs_changed=0
+
+# stdin lines: <local ref> <local sha> <remote ref> <remote sha>
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ -n "${local_ref:-}" ] || continue
+
+  # (1) Guard force-push to main: remote branch exists and its tip is NOT an
+  #     ancestor of what we're pushing => non-fast-forward => rewind.
+  if [ "$remote_ref" = "$PROTECTED_REF" ] && [ "$remote_sha" != "$ZERO" ] && [ "$local_sha" != "$ZERO" ]; then
+    if ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
+      force_to_main=1
+    fi
+  fi
+
+  # (3) Detect *.cs changes in the range being pushed.
+  if [ "$local_sha" != "$ZERO" ]; then
+    if [ "$remote_sha" != "$ZERO" ]; then
+      range="$remote_sha..$local_sha"
+    else
+      # New remote branch: diff against origin/main when known, else the whole tip commit.
+      base="$(git rev-parse --verify --quiet origin/main || true)"
+      if [ -n "$base" ]; then range="$base..$local_sha"; else range="$local_sha"; fi
+    fi
+    if git diff --name-only "$range" 2>/dev/null | grep -q '\.cs$'; then
+      cs_changed=1
+    fi
+  fi
+done
+
+if [ "$force_to_main" = "1" ]; then
+  echo "pre-push: BLOCKED force-push (non-fast-forward) to main." >&2
+  echo "          This would rewrite shared history. Override intentionally with:" >&2
+  echo "          GIT_HOOKS_SKIP=1 git push ..." >&2
+  exit 1
+fi
+
+echo "pre-push: verifying formatting (dotnet format --verify-no-changes)..."
+dotnet format "$SOLUTION" --verify-no-changes --no-restore
+
+if [ "$cs_changed" = "1" ]; then
+  echo "pre-push: *.cs changed -> clean build (dotnet build --no-incremental)..."
+  dotnet build "$SOLUTION" --no-incremental
+else
+  echo "pre-push: no *.cs changes -> skipping build."
+fi
+
+echo "pre-push: OK"
