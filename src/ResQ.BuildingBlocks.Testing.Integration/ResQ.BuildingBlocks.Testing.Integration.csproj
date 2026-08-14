@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>ResQ.BuildingBlocks.Testing.Integration</PackageId>
+    <Description>Docker-backed integration-test helpers for the ResQ building blocks: a Testcontainers PostgreSQL fixture, an xUnit database collection, and a ResqWebApplicationFactory over Microsoft.AspNetCore.Mvc.Testing. Isolated from ResQ.BuildingBlocks.Testing so unit-only consumers do not drag in Docker or ASP.NET.</Description>
+    <PackageTags>testing;integration-tests;testcontainers;postgresql;webapplicationfactory;xunit;building-blocks</PackageTags>
+    <!-- Override the inherited net8.0;net9.0: Microsoft.AspNetCore.Mvc.Testing 9.0.0 ships net9-only assets. -->
+    <TargetFrameworks>net9.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ResQ.BuildingBlocks.Testing\ResQ.BuildingBlocks.Testing.csproj" />
+    <ProjectReference Include="..\ResQ.BuildingBlocks.Application\ResQ.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\ResQ.BuildingBlocks.Domain\ResQ.BuildingBlocks.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Testcontainers" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="xunit" />
+  </ItemGroup>
+
+</Project>

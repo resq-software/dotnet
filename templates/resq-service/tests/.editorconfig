@@ -1,0 +1,4 @@
+[*.cs]
+# Descriptive Method_Scenario_Expectation test names are the idiomatic xUnit convention.
+# Relax the underscore-naming rule for the TEST projects only; src/ stays strict.
+dotnet_diagnostic.CA1707.severity = none

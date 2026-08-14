@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- Docker/WebApplicationFactory helpers (net9-only) + the host under test. FluentAssertions flows transitively. -->
+    <ProjectReference Include="..\..\..\..\src\ResQ.BuildingBlocks.Testing.Integration\ResQ.BuildingBlocks.Testing.Integration.csproj" />
+    <ProjectReference Include="..\..\src\Widgets.Api\Widgets.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+
+</Project>

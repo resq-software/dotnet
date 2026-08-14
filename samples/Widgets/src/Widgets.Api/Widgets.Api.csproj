@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\ResQ.BuildingBlocks.Adapters.Web\ResQ.BuildingBlocks.Adapters.Web.csproj" />
+    <ProjectReference Include="..\..\..\..\src\ResQ.BuildingBlocks.ServiceDefaults\ResQ.BuildingBlocks.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Widgets.Application\Widgets.Application.csproj" />
+    <ProjectReference Include="..\Widgets.Infrastructure\Widgets.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      The host does not call UseNpgsql directly — it composes Widgets.Infrastructure, which owns the Npgsql
+      reference. With the central pin (9.0.2) coherent against the 9.0.0 EF Core stack, no project-local
+      Npgsql reference or override is needed here.
+    -->
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>ResQ.BuildingBlocks.Testing</PackageId>
+    <Description>Lightweight, dependency-free test doubles for the ResQ building blocks — deterministic clock, unit-of-work fakes, recording dispatchers/publishers, a fluent test-data Builder, capturing/xUnit logger providers, hexagon dependency-rule data, and a one-call test-double registration helper. No Docker or ASP.NET; safe for any unit-test project.</Description>
+    <PackageTags>testing;test-doubles;fakes;xunit;fluentassertions;nsubstitute;hexagonal;building-blocks</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ResQ.BuildingBlocks.Application\ResQ.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\ResQ.BuildingBlocks.Domain\ResQ.BuildingBlocks.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NSubstitute" />
+  </ItemGroup>
+
+</Project>

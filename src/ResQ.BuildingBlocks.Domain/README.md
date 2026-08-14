@@ -12,15 +12,15 @@ The **inner core** of the hexagon — dependency-free DDD primitives. No infrast
 | `Guard` | Invariant enforcement at domain boundaries |
 
 ```csharp
-public sealed class Drone : AggregateRoot<Guid>
+public sealed class Widget : AggregateRoot<Guid>
 {
-    private Drone(Guid id, string callSign) : base(id) => CallSign = callSign;
-    public string CallSign { get; }
+    private Widget(Guid id, string sku) : base(id) => Sku = sku;
+    public string Sku { get; }
 
-    public static Result<Drone> Register(string callSign) =>
-        string.IsNullOrWhiteSpace(callSign)
-            ? Result.Failure<Drone>(Error.Validation("drone.callsign_required", "Call sign is required."))
-            : new Drone(Guid.NewGuid(), callSign);
+    public static Result<Widget> Create(string sku) =>
+        string.IsNullOrWhiteSpace(sku)
+            ? Result.Failure<Widget>(Error.Validation("widget.sku_required", "SKU is required."))
+            : new Widget(Guid.NewGuid(), sku);
 }
 ```
 

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="ResQ.BuildingBlocks.Adapters.Persistence" />
+    <!--#if (IncludeMessaging) -->
+    <PackageReference Include="ResQ.BuildingBlocks.Adapters.Messaging" />
+    <!--#endif -->
+    <ProjectReference Include="..\ResQ.Service.Application\ResQ.Service.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--#if (DatabaseProvider == "postgres") -->
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="EFCore.NamingConventions" />
+    <!--#else -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <!--#endif -->
+  </ItemGroup>
+
+</Project>

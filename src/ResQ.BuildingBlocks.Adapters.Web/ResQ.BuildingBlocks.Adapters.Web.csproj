@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--
+      net9-only: the built-in AddOpenApi/MapOpenApi surface and Microsoft.AspNetCore.OpenApi 9.0.0
+      ship net9 assets only. A code-only #if guard does not fix restore, so this project overrides
+      the inherited net8.0;net9.0 TFM to single-target net9.0 (see spec blocker #1).
+    -->
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <PackageId>ResQ.BuildingBlocks.Adapters.Web</PackageId>
+    <Description>HTTP driving adapter for the ResQ building blocks — a minimal-API surface that maps the Result/Error model to RFC 7807 ProblemDetails, plus endpoint discovery, FluentValidation endpoint filters, correlation middleware, API versioning, OpenAPI/Scalar, a config-bound CORS allowlist, and one ordered AddResqWeb/UseResqWeb wiring. Depends only on the application and domain cores.</Description>
+    <PackageTags>aspnetcore;minimal-api;problem-details;openapi;cors;web;hexagonal;building-blocks</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ResQ.BuildingBlocks.Application\ResQ.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\ResQ.BuildingBlocks.Domain\ResQ.BuildingBlocks.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Asp.Versioning.Http" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="Scalar.AspNetCore" />
+  </ItemGroup>
+
+</Project>

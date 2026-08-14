@@ -1,0 +1,15 @@
+<Project>
+
+  <!--
+    Samples inherit ONLY the repo-root Directory.Build.props (TWAE, Nullable, ImplicitUsings,
+    AnalysisLevel), deliberately NOT src/Directory.Build.props — so no GenerateDocumentationFile
+    (no CS1591) and these projects are never packed.
+  -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+
+</Project>
