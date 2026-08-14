@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ResQ.BuildingBlocks.Application/ResQ.BuildingBlocks.Application.csproj" />
+    <Project Path="src/ResQ.BuildingBlocks.Domain/ResQ.BuildingBlocks.Domain.csproj" />
+  </Folder>
+</Solution>

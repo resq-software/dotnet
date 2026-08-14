@@ -1,0 +1,20 @@
+root = true
+
+[*.cs]
+# Curated analyzer baseline for a public building-blocks library.
+
+# 'Error' is the idiomatic name in the Result/Error pattern; the VB-keyword clash is noise.
+dotnet_diagnostic.CA1716.severity = none
+
+# Building blocks are consumed by many callers; we don't ship a sealed exception hierarchy here.
+dotnet_diagnostic.CA1032.severity = none
+
+# Nullable reference types already guard public-parameter null-ness.
+dotnet_diagnostic.CA1062.severity = none
+
+# 'RequestHandlerDelegate' is the idiomatic pipeline-continuation name (matches the ecosystem).
+dotnet_diagnostic.CA1711.severity = none
+
+# High-perf LoggerMessage source-gen is a worthwhile future polish, not required in thin behaviors.
+dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA1873.severity = none

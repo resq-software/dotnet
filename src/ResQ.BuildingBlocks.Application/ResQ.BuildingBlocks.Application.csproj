@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>ResQ.BuildingBlocks.Application</PackageId>
+    <Description>Application-core abstractions — CQRS command/query contracts, the driven-port interfaces (IUnitOfWork, IClock, IDomainEventDispatcher), and cross-cutting pipeline behaviors (validation, logging). Depends only on the domain core.</Description>
+    <PackageTags>cqrs;ports;pipeline-behavior;application;hexagonal;building-blocks</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ResQ.BuildingBlocks.Domain\ResQ.BuildingBlocks.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>
