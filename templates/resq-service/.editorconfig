@@ -6,8 +6,16 @@ root = true
 # 'Error' is the idiomatic name in the Result/Error pattern; the VB-keyword clash is noise.
 dotnet_diagnostic.CA1716.severity = none
 
+# We don't ship a sealed exception hierarchy in a generated service.
+dotnet_diagnostic.CA1032.severity = none
+
 # Nullable reference types already guard public-parameter null-ness (handlers also ThrowIfNull).
 dotnet_diagnostic.CA1062.severity = none
 
+# Idiomatic suffixes trip CA1711 without cause: the xUnit '…Collection' fixture marker and the
+# building blocks' '…Delegate' pipeline continuation are the conventional names.
+dotnet_diagnostic.CA1711.severity = none
+
 # High-perf LoggerMessage source-gen is a worthwhile future polish, not required in thin services.
 dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA1873.severity = none
