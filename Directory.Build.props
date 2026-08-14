@@ -13,6 +13,12 @@
     <Deterministic>true</Deterministic>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
+    <!-- Build DX + supply-chain audit (mirrors dotnet-sdk). -->
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditLevel>moderate</NuGetAuditLevel>
+
     <!-- Package identity (shared across every publishable library). -->
     <Company>ResQ Systems, Inc.</Company>
     <Authors>ResQ Systems</Authors>
