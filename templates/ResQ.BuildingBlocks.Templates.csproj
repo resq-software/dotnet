@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Packaging project for the `dotnet new` template(s) under templates/resq-service/**.
+
+    This project is a CONTENT-ONLY NuGet package: it ships the template source verbatim (tokens intact)
+    so the templating engine can transform it at `dotnet new` time. It is NOT part of
+    ResQ.BuildingBlocks.slnx and is NOT built by `dotnet build`/`dotnet test` — the template content
+    carries template tokens and references not-yet-published ResQ.BuildingBlocks.* versions, so it does
+    not compile in place. Validate it in a separate job:
+
+      dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o artifacts
+      dotnet new install ./artifacts/ResQ.BuildingBlocks.Templates.*.nupkg
+      dotnet new resq-service -n Smoke
+      # then build/test the generated output against locally-packed building-block nupkgs.
+  -->
+
+  <PropertyGroup>
+    <!-- A template package targets netstandard2.0 by convention and ships no build output. -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.1.0</Version>
+
+    <PackageType>Template</PackageType>
+    <PackageId>ResQ.BuildingBlocks.Templates</PackageId>
+    <Title>ResQ Clean/Hexagonal Service Templates</Title>
+    <Description>
+      `dotnet new` templates that scaffold a production-shaped ResQ service: a four-ring
+      Clean/Hexagonal (Ports and Adapters) solution plus unit, architecture, and integration test
+      projects, wired to the ResQ.BuildingBlocks.* NuGet packages. Run: dotnet new resq-service -n MyService.
+    </Description>
+    <PackageTags>dotnet-new;templates;clean-architecture;hexagonal;ddd;cqrs;resq</PackageTags>
+
+    <!-- Content-only package: pack the template tree, ship no assembly, and land files under content/. -->
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+
+    <!-- NU5128: a content-only package legitimately has no lib/ and no dependencies. -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+
+    <!--
+      NoDefaultExcludes is REQUIRED: NuGet's default pack excludes drop dot-prefixed paths, which would
+      strip the mandatory .template.config/ folder (and the generated .editorconfig / .github / .gitignore)
+      from the package and leave `dotnet new install` unable to discover the template.
+    -->
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+
+    <!-- Take full control of items: no default Compile/Content globs pulling in the template source. -->
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <IsPackable>true</IsPackable>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Ship the entire template tree as content; never its build artifacts. -->
+    <Content Include="resq-service/**/*"
+             Exclude="resq-service/**/bin/**;resq-service/**/obj/**" />
+  </ItemGroup>
+
+</Project>

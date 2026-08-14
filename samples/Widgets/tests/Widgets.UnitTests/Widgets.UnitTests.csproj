@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- Test doubles: FakeClock, FakeUnitOfWork, RecordingDomainEventDispatcher (also flows xunit/FluentAssertions/NSubstitute). -->
+    <ProjectReference Include="..\..\..\..\src\ResQ.BuildingBlocks.Testing\ResQ.BuildingBlocks.Testing.csproj" />
+    <ProjectReference Include="..\..\src\Widgets.Application\Widgets.Application.csproj" />
+    <ProjectReference Include="..\..\src\Widgets.Domain\Widgets.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+
+</Project>

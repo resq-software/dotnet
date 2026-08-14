@@ -35,13 +35,89 @@ jobs:
 
       - run: dotnet restore
       - run: dotnet build --no-restore -c Release
-      - run: dotnet test --no-build -c Release --verbosity normal
+      # Exclude the Docker-dependent integration suite here — it runs in the
+      # integration-tests job below where a Docker daemon is available.
+      - run: dotnet test --no-build -c Release --verbosity normal --filter "Category!=Integration"
+      # Packs the 8 building-block libraries (samples are IsPackable=false).
       - run: dotnet pack --no-build -c Release -o artifacts
+      # The dotnet-new template pack is excluded from the solution, so pack it here
+      # too — the uploaded artifact set is then the 8 libraries + the template.
+      - name: Pack the dotnet-new template package
+        run: dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o artifacts
 
       - uses: actions/upload-artifact@v4
         with:
           name: nuget
           path: artifacts/*.nupkg
+
+  integration-tests:
+    name: Integration Tests (Docker)
+    runs-on: ubuntu-latest # GitHub-hosted ubuntu runners ship a running Docker daemon for Testcontainers
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # MinVer needs full history + tags for versioning
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - run: dotnet restore
+      - run: dotnet build --no-restore -c Release
+      # Only the Docker-backed suite; PostgresContainerFixture et al. gate on Docker availability.
+      - run: dotnet test --no-build -c Release --verbosity normal --filter "Category=Integration"
+
+  template-validation:
+    name: Template Smoke (dotnet new)
+    runs-on: ubuntu-latest
+    env:
+      # Deterministic version shared by the locally-packed building blocks and the
+      # template, so the generated service restores them off the temp NuGet source.
+      PKG_VERSION: 0.0.0-ci
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # MinVer needs full history + tags for versioning
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      # 1) Pack the 8 building-block packages into a temp NuGet source — a fresh
+      #    service references ResQ.BuildingBlocks.* by PackageReference, and those
+      #    versions are not on nuget.org yet.
+      - name: Pack building blocks to a local feed
+        # MinVer derives Version from git height and overrides -p:Version; MinVerVersionOverride is its
+        # documented escape hatch, so the packed feed is deterministically $PKG_VERSION (matching the
+        # version the generated service is repointed to below).
+        run: dotnet pack -c Release -o "$RUNNER_TEMP/local-nuget" -p:MinVerVersionOverride="$PKG_VERSION"
+
+      # 2) Pack the dotnet-new template package (excluded from the solution build).
+      - name: Pack the template package
+        run: dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o "$RUNNER_TEMP/template-pkg" -p:Version="$PKG_VERSION"
+
+      # 3) Install the packed template, then generate a service from it.
+      - name: Install template
+        run: dotnet new install "$RUNNER_TEMP"/template-pkg/ResQ.BuildingBlocks.Templates.*.nupkg
+
+      - name: Generate a service from the template
+        run: dotnet new resq-service -n Smoke -o "$RUNNER_TEMP/Smoke"
+
+      # 4) Build + test the generated output against the locally-packed building
+      #    blocks on the temp NuGet source.
+      - name: Build & test the generated service
+        working-directory: ${{ runner.temp }}/Smoke
+        run: |
+          [ -f nuget.config ] || dotnet new nugetconfig
+          dotnet nuget add source "$RUNNER_TEMP/local-nuget" --name local-buildingblocks --configfile nuget.config
+          # The template pins ResQ.BuildingBlocks.* at their published version; repoint them at the
+          # locally-packed CI version so restore resolves off the temp feed. That version is not on
+          # nuget.org, so there is no ambiguity with the public packages (and none of the new adapter
+          # packages are published yet).
+          sed -i -E "s|(Include=\"ResQ\.BuildingBlocks\.[A-Za-z.]+\" Version=)\"[^\"]*\"|\1\"$PKG_VERSION\"|g" Directory.Packages.props
+          dotnet restore
+          dotnet build --no-restore -c Release
+          dotnet test --no-build -c Release --filter "Category!=Integration"
 
   publish:
     name: Publish to NuGet

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\ResQ.BuildingBlocks.Application\ResQ.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\Widgets.Domain\Widgets.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+
+</Project>

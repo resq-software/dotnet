@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ResQ.Service.Domain/ResQ.Service.Domain.csproj" />
+    <Project Path="src/ResQ.Service.Application/ResQ.Service.Application.csproj" />
+    <Project Path="src/ResQ.Service.Infrastructure/ResQ.Service.Infrastructure.csproj" />
+    <Project Path="src/ResQ.Service.Api/ResQ.Service.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ResQ.Service.UnitTests/ResQ.Service.UnitTests.csproj" />
+    <Project Path="tests/ResQ.Service.ArchitectureTests/ResQ.Service.ArchitectureTests.csproj" />
+    <Project Path="tests/ResQ.Service.IntegrationTests/ResQ.Service.IntegrationTests.csproj" />
+  </Folder>
+</Solution>

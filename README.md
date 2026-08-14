@@ -16,13 +16,13 @@ Reusable .NET building blocks for **Clean / Hexagonal (Ports & Adapters)** archi
 |---|---|---|---|
 | **`ResQ.BuildingBlocks.Domain`** | Domain (inner) | ✅ | `Entity`, `AggregateRoot`, `ValueObject`, `IDomainEvent`, `Result`/`Error`, `Guard` — dependency-free |
 | **`ResQ.BuildingBlocks.Application`** | Application | ✅ | CQRS contracts, driven **ports** (`IUnitOfWork`/`IClock`/`IDomainEventDispatcher`), pipeline behaviors |
-| `ResQ.BuildingBlocks.Adapters.Web` | Driving | 🚧 | REPR endpoints, `Result`→HTTP mapping, ProblemDetails, versioning, OpenAPI |
-| `ResQ.BuildingBlocks.Adapters.Persistence` | Driven | 🚧 | EF Core repository base, Specification eval, `UnitOfWork`, Outbox, Idempotency |
-| `ResQ.BuildingBlocks.Adapters.Messaging` | Driven | 🚧 | broker abstractions, consumer base |
-| `ResQ.BuildingBlocks.ServiceDefaults` | Cross-cutting | 🚧 | OpenTelemetry, health checks, resilience, config validation |
-| `ResQ.BuildingBlocks.Testing` | — | 🚧 | fixtures/harness for the paradigm |
+| `ResQ.BuildingBlocks.Adapters.Web` | Driving | ✅ | REPR endpoints, `Result`→HTTP mapping, ProblemDetails, versioning, OpenAPI |
+| `ResQ.BuildingBlocks.Adapters.Persistence` | Driven | ✅ | EF Core repository base, Specification eval, `UnitOfWork`, Outbox, Idempotency |
+| `ResQ.BuildingBlocks.Adapters.Messaging` | Driven | ✅ | broker abstractions, consumer base |
+| `ResQ.BuildingBlocks.ServiceDefaults` | Cross-cutting | ✅ | OpenTelemetry, health checks, resilience, config validation |
+| `ResQ.BuildingBlocks.Testing` | — | ✅ | fixtures/harness for the paradigm |
 
-Plus `templates/resq-service` (a `dotnet new` template) and `samples/Widgets` (a throwaway, non-moat reference service showing the whole hexagon). 🚧 = scaffolded next.
+Plus `templates/resq-service` (a `dotnet new` template) and `samples/Widgets` (a throwaway, non-moat reference service showing the whole hexagon).
 
 ## Repo mechanics (inspired by `dotnet/extensions`)
 

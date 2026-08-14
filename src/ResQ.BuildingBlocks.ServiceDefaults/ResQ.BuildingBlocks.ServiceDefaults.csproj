@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>ResQ.BuildingBlocks.ServiceDefaults</PackageId>
+    <Description>Aspire-style cross-cutting service defaults — one call wires OpenTelemetry (traces, metrics, logs), health checks, service discovery, standard HTTP resilience, and a testable IClock. Also ships the CQRS observability pipeline behaviors (tracing + metrics), strongly-typed options registration, and a Polly resilience-pipeline helper keyed on the domain ErrorType.</Description>
+    <PackageTags>aspire;service-defaults;opentelemetry;observability;health-checks;resilience;building-blocks</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ResQ.BuildingBlocks.Application\ResQ.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\ResQ.BuildingBlocks.Domain\ResQ.BuildingBlocks.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" />
+  </ItemGroup>
+
+</Project>

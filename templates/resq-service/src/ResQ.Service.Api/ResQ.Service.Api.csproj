@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="ResQ.BuildingBlocks.Adapters.Web" />
+    <PackageReference Include="ResQ.BuildingBlocks.ServiceDefaults" />
+    <ProjectReference Include="..\ResQ.Service.Application\ResQ.Service.Application.csproj" />
+    <ProjectReference Include="..\ResQ.Service.Infrastructure\ResQ.Service.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+
+</Project>

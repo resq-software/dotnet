@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\ResQ.BuildingBlocks.Adapters.Persistence\ResQ.BuildingBlocks.Adapters.Persistence.csproj" />
+    <ProjectReference Include="..\..\..\..\src\ResQ.BuildingBlocks.Adapters.Messaging\ResQ.BuildingBlocks.Adapters.Messaging.csproj" />
+    <ProjectReference Include="..\Widgets.Application\Widgets.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Widgets.Infrastructure calls UseNpgsql directly, so it references Npgsql explicitly. The version is
+      supplied by the central pin in Directory.Packages.props (9.0.2), which is coherent with the repo's
+      9.0.0 EF Core stack — no project-local override is needed.
+    -->
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="EFCore.NamingConventions" />
+  </ItemGroup>
+
+</Project>

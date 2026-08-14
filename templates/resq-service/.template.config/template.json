@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "ResQ Systems",
+  "classifications": [ "Web", "API", "Clean Architecture", "Hexagonal", "DDD" ],
+  "identity": "ResQ.BuildingBlocks.Service.CleanArchitecture",
+  "groupIdentity": "ResQ.BuildingBlocks.Service",
+  "name": "ResQ Clean/Hexagonal Service",
+  "shortName": "resq-service",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "ResQ.Service",
+  "defaultName": "ResQ.Service",
+  "preferNameDirectory": true,
+  "symbols": {
+    "OrgName": {
+      "type": "parameter",
+      "datatype": "text",
+      "defaultValue": "ResQ",
+      "replaces": "OrgNamePlaceholder",
+      "description": "Organization name used in the generated package metadata and README. Placed via the collision-free 'OrgNamePlaceholder' sentinel so it never touches ResQ.Service or ResQ.BuildingBlocks.* identifiers."
+    },
+    "DatabaseProvider": {
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "postgres",
+      "description": "The EF Core provider wired into the Infrastructure ring.",
+      "choices": [
+        {
+          "choice": "postgres",
+          "description": "PostgreSQL via Npgsql with snake_case naming (production default)."
+        },
+        {
+          "choice": "sqlite",
+          "description": "SQLite for zero-dependency local development."
+        }
+      ]
+    },
+    "IncludeMessaging": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Include the integration-event + domain-event-handler messaging slice (AddResqMessaging). When false, those folders and the messaging wiring are dropped."
+    },
+    "IncludeOutbox": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Enable the transactional outbox (AddResqPersistence UseOutbox = true), which also registers the OutboxRelay hosted service."
+    },
+    "Framework": {
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "net9.0",
+      "replaces": "net9.0",
+      "description": "Target framework. Only net9.0 is offered: the generated service references the net9-only Adapters.Web / Testing.Integration packages, so a net8.0 choice would produce a non-restorable combination.",
+      "choices": [
+        {
+          "choice": "net9.0",
+          "description": ".NET 9."
+        }
+      ]
+    },
+    "skipRestore": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "If specified, skips the automatic NuGet restore on create."
+    }
+  },
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "modifiers": [
+        {
+          "condition": "(!IncludeMessaging)",
+          "exclude": [
+            "src/ResQ.Service.Application/IntegrationEvents/**",
+            "src/ResQ.Service.Application/DomainEventHandlers/**"
+          ]
+        }
+      ]
+    }
+  ],
+  "primaryOutputs": [
+    { "path": "src/ResQ.Service.Api/ResQ.Service.Api.csproj" }
+  ],
+  "postActions": [
+    {
+      "id": "restore",
+      "condition": "(!skipRestore)",
+      "description": "Restore NuGet packages required by this project.",
+      "manualInstructions": [
+        { "text": "Run 'dotnet restore'" }
+      ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ]
+}

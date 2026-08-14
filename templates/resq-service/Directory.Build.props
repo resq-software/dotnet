@@ -1,0 +1,25 @@
+<Project>
+
+  <!--
+    Repo-wide build settings for the generated service. Mirrors the ResQ.BuildingBlocks conventions
+    (warnings-as-errors, latest-recommended analyzers, deterministic builds) but stays lean: these are
+    application projects, not published libraries, so there is no packaging/SourceLink/doc machinery.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+
+    <!-- Deterministic, reproducible builds (CI sets ContinuousIntegrationBuild=true). -->
+    <Deterministic>true</Deterministic>
+
+    <!-- Identity for anything that happens to pack (e.g. NuGet metadata on tooling). -->
+    <Company>OrgNamePlaceholder</Company>
+    <Authors>OrgNamePlaceholder</Authors>
+  </PropertyGroup>
+
+</Project>

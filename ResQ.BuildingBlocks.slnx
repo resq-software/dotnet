@@ -1,6 +1,21 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/ResQ.BuildingBlocks.Adapters.Persistence/ResQ.BuildingBlocks.Adapters.Persistence.csproj" />
+    <Project Path="src/ResQ.BuildingBlocks.Adapters.Web/ResQ.BuildingBlocks.Adapters.Web.csproj" />
     <Project Path="src/ResQ.BuildingBlocks.Application/ResQ.BuildingBlocks.Application.csproj" />
     <Project Path="src/ResQ.BuildingBlocks.Domain/ResQ.BuildingBlocks.Domain.csproj" />
+    <Project Path="src/ResQ.BuildingBlocks.Adapters.Messaging/ResQ.BuildingBlocks.Adapters.Messaging.csproj" />
+    <Project Path="src/ResQ.BuildingBlocks.ServiceDefaults/ResQ.BuildingBlocks.ServiceDefaults.csproj" />
+    <Project Path="src/ResQ.BuildingBlocks.Testing.Integration/ResQ.BuildingBlocks.Testing.Integration.csproj" />
+    <Project Path="src/ResQ.BuildingBlocks.Testing/ResQ.BuildingBlocks.Testing.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/Widgets/src/Widgets.Domain/Widgets.Domain.csproj" />
+    <Project Path="samples/Widgets/src/Widgets.Application/Widgets.Application.csproj" />
+    <Project Path="samples/Widgets/src/Widgets.Infrastructure/Widgets.Infrastructure.csproj" />
+    <Project Path="samples/Widgets/src/Widgets.Api/Widgets.Api.csproj" />
+    <Project Path="samples/Widgets/tests/Widgets.UnitTests/Widgets.UnitTests.csproj" />
+    <Project Path="samples/Widgets/tests/Widgets.ArchitectureTests/Widgets.ArchitectureTests.csproj" />
+    <Project Path="samples/Widgets/tests/Widgets.IntegrationTests/Widgets.IntegrationTests.csproj" />
   </Folder>
 </Solution>

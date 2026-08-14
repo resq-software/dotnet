@@ -8,11 +8,25 @@ public interface IDomainEvent
 }
 
 /// <summary>
+/// A non-generic seam for reading and clearing the domain events an aggregate has raised.
+/// Lets infrastructure enumerate heterogeneous aggregates in a change tracker without knowing
+/// their <c>TId</c> — you cannot pattern-match on the open generic <c>Entity&lt;&gt;</c>.
+/// </summary>
+public interface IHasDomainEvents
+{
+    /// <summary>Domain events raised by this aggregate, awaiting dispatch.</summary>
+    IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
+
+    /// <summary>Clears pending domain events (called by the dispatcher once handled).</summary>
+    void ClearDomainEvents();
+}
+
+/// <summary>
 /// Base class for entities — domain objects with a stable identity (<typeparamref name="TId"/>).
 /// Equality is by identity, not by attribute values.
 /// </summary>
 /// <typeparam name="TId">The identity type (e.g. a strongly-typed id or <see cref="System.Guid"/>).</typeparam>
-public abstract class Entity<TId> : IEquatable<Entity<TId>>
+public abstract class Entity<TId> : IEquatable<Entity<TId>>, IHasDomainEvents
     where TId : notnull
 {
     private readonly List<IDomainEvent> _domainEvents = [];

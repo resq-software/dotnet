@@ -1,0 +1,46 @@
+<Project>
+
+  <!--
+    Central Package Management for the generated service: every version pinned here once.
+    The ResQ.BuildingBlocks.* packages are referenced via PackageReference (never ProjectReference),
+    so a fresh service is production-shaped from minute one.
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ResQ building blocks (the frame). Bump these together as new versions publish. -->
+    <PackageVersion Include="ResQ.BuildingBlocks.Domain" Version="0.1.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Application" Version="0.1.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Adapters.Web" Version="0.1.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Adapters.Persistence" Version="0.1.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Adapters.Messaging" Version="0.1.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.ServiceDefaults" Version="0.1.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Testing" Version="0.1.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Testing.Integration" Version="0.1.0" />
+
+    <!-- Application layer -->
+    <PackageVersion Include="FluentValidation" Version="11.11.0" />
+
+    <!--
+      EF Core provider(s). Pinned to the coherent 9.0.0 stack that the building blocks target — note
+      this is Npgsql 9.0.0 (NOT 9.0.4, which would require EF Core >= 9.0.1 and downgrade the 9.0.0 pins,
+      NU1109). Keeping the whole graph on 9.0.0 means no VersionOverride is ever needed downstream.
+    -->
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+    <PackageVersion Include="EFCore.NamingConventions" Version="9.0.0" />
+
+    <!-- Testing -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.2" />
+    <PackageVersion Include="NSubstitute" Version="5.3.0" />
+    <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+  </ItemGroup>
+
+</Project>
