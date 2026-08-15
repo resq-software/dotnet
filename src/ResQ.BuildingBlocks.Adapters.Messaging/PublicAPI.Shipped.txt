@@ -1,1 +1,90 @@
 #nullable enable
+ResQ.BuildingBlocks.Adapters.Messaging.ChannelMessageBroker
+ResQ.BuildingBlocks.Adapters.Messaging.ChannelMessageBroker.AcknowledgeAsync(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope! message, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.ChannelMessageBroker.ChannelMessageBroker(ResQ.BuildingBlocks.Application.IMessageSerializer! serializer, ResQ.BuildingBlocks.Application.IIntegrationEventTypeRegistry! registry) -> void
+ResQ.BuildingBlocks.Adapters.Messaging.ChannelMessageBroker.NackAsync(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope! message, System.Exception! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.ChannelMessageBroker.PublishAsync(ResQ.BuildingBlocks.Application.IntegrationEvent! event, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.ChannelMessageBroker.ReadAllAsync(System.Threading.CancellationToken ct) -> System.Collections.Generic.IAsyncEnumerable<ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope!>!
+ResQ.BuildingBlocks.Adapters.Messaging.ConsumerOptions
+ResQ.BuildingBlocks.Adapters.Messaging.ConsumerOptions.ConsumerOptions() -> void
+ResQ.BuildingBlocks.Adapters.Messaging.ConsumerOptions.EnableIdempotency.get -> bool
+ResQ.BuildingBlocks.Adapters.Messaging.ConsumerOptions.EnableIdempotency.set -> void
+ResQ.BuildingBlocks.Adapters.Messaging.ConsumerOptions.MaxConcurrency.get -> int
+ResQ.BuildingBlocks.Adapters.Messaging.ConsumerOptions.MaxConcurrency.set -> void
+ResQ.BuildingBlocks.Adapters.Messaging.ConsumerOptions.Retry.get -> ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions!
+ResQ.BuildingBlocks.Adapters.Messaging.ConsumerOptions.Retry.set -> void
+ResQ.BuildingBlocks.Adapters.Messaging.DictionaryIntegrationEventTypeRegistry
+ResQ.BuildingBlocks.Adapters.Messaging.DictionaryIntegrationEventTypeRegistry.DictionaryIntegrationEventTypeRegistry() -> void
+ResQ.BuildingBlocks.Adapters.Messaging.DictionaryIntegrationEventTypeRegistry.Register(System.Type! eventType) -> void
+ResQ.BuildingBlocks.Adapters.Messaging.DictionaryIntegrationEventTypeRegistry.TryResolve(string! eventType, out System.Type? type) -> bool
+ResQ.BuildingBlocks.Adapters.Messaging.IDeadLetterSink
+ResQ.BuildingBlocks.Adapters.Messaging.IDeadLetterSink.SendAsync(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope! message, System.Exception! error, int attempts, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.IIntegrationEventHandler<TEvent>
+ResQ.BuildingBlocks.Adapters.Messaging.IIntegrationEventHandler<TEvent>.Handle(TEvent! event, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.IMessageSource
+ResQ.BuildingBlocks.Adapters.Messaging.IMessageSource.AcknowledgeAsync(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope! message, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.IMessageSource.NackAsync(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope! message, System.Exception! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.IMessageSource.ReadAllAsync(System.Threading.CancellationToken ct) -> System.Collections.Generic.IAsyncEnumerable<ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope!>!
+ResQ.BuildingBlocks.Adapters.Messaging.IntegrationEventDispatcher
+ResQ.BuildingBlocks.Adapters.Messaging.IntegrationEventDispatcher.DispatchAsync(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope! message, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.IntegrationEventDispatcher.IntegrationEventDispatcher(System.IServiceProvider! provider, ResQ.BuildingBlocks.Application.IMessageSerializer! serializer, ResQ.BuildingBlocks.Application.IIntegrationEventTypeRegistry! registry) -> void
+ResQ.BuildingBlocks.Adapters.Messaging.LoggingDeadLetterSink
+ResQ.BuildingBlocks.Adapters.Messaging.LoggingDeadLetterSink.LoggingDeadLetterSink(Microsoft.Extensions.Logging.ILogger<ResQ.BuildingBlocks.Adapters.Messaging.LoggingDeadLetterSink!>! logger) -> void
+ResQ.BuildingBlocks.Adapters.Messaging.LoggingDeadLetterSink.SendAsync(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope! message, System.Exception! error, int attempts, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.MessageConsumerService
+ResQ.BuildingBlocks.Adapters.Messaging.MessageConsumerService.MessageConsumerService(ResQ.BuildingBlocks.Adapters.Messaging.IMessageSource! source, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopes, Microsoft.Extensions.Options.IOptions<ResQ.BuildingBlocks.Adapters.Messaging.ConsumerOptions!>! options, Microsoft.Extensions.Logging.ILogger<ResQ.BuildingBlocks.Adapters.Messaging.MessageConsumerService!>! logger) -> void
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.<Clone>$() -> ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope!
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.Body.get -> System.ReadOnlyMemory<byte>
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.Body.init -> void
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.Deconstruct(out string! MessageId, out string! MessageType, out System.DateTimeOffset OccurredOnUtc, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Headers, out System.ReadOnlyMemory<byte> Body) -> void
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.Equals(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope? other) -> bool
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.Headers.init -> void
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.MessageEnvelope(string! MessageId, string! MessageType, System.DateTimeOffset OccurredOnUtc, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Headers, System.ReadOnlyMemory<byte> Body) -> void
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.MessageId.get -> string!
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.MessageId.init -> void
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.MessageType.get -> string!
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.MessageType.init -> void
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.OccurredOnUtc.get -> System.DateTimeOffset
+ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.OccurredOnUtc.init -> void
+ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder
+ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.AddKeyedMessageSource<TSource>(object! sourceKey) -> ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!
+ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.AddMessageSource<TSource>() -> ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!
+ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.UseDeadLetterSink<TSink>() -> ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!
+ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.UseInMemory() -> ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!
+ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.UsePublisher<TPublisher>() -> ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!
+ResQ.BuildingBlocks.Adapters.Messaging.MessagingServiceCollectionExtensions
+ResQ.BuildingBlocks.Adapters.Messaging.NullDeadLetterSink
+ResQ.BuildingBlocks.Adapters.Messaging.NullDeadLetterSink.NullDeadLetterSink() -> void
+ResQ.BuildingBlocks.Adapters.Messaging.NullDeadLetterSink.SendAsync(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope! message, System.Exception! error, int attempts, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.NullIdempotencyStore
+ResQ.BuildingBlocks.Adapters.Messaging.NullIdempotencyStore.HasProcessedAsync(string! messageId, string! handler, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+ResQ.BuildingBlocks.Adapters.Messaging.NullIdempotencyStore.MarkProcessedAsync(string! messageId, string! handler, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.NullIdempotencyStore.NullIdempotencyStore() -> void
+ResQ.BuildingBlocks.Adapters.Messaging.NullIntegrationEventPublisher
+ResQ.BuildingBlocks.Adapters.Messaging.NullIntegrationEventPublisher.NullIntegrationEventPublisher() -> void
+ResQ.BuildingBlocks.Adapters.Messaging.NullIntegrationEventPublisher.PublishAsync(ResQ.BuildingBlocks.Application.IntegrationEvent! event, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions
+ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions.BackoffMultiplier.get -> double
+ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions.BackoffMultiplier.set -> void
+ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions.BaseDelay.get -> System.TimeSpan
+ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions.BaseDelay.set -> void
+ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions.MaxAttempts.get -> int
+ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions.MaxAttempts.set -> void
+ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions.RetryOptions() -> void
+ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions.UseJitter.get -> bool
+ResQ.BuildingBlocks.Adapters.Messaging.RetryOptions.UseJitter.set -> void
+ResQ.BuildingBlocks.Adapters.Messaging.SystemTextJsonMessageSerializer
+ResQ.BuildingBlocks.Adapters.Messaging.SystemTextJsonMessageSerializer.ContentType.get -> string!
+ResQ.BuildingBlocks.Adapters.Messaging.SystemTextJsonMessageSerializer.Deserialize(System.ReadOnlySpan<byte> data, System.Type! type) -> object?
+ResQ.BuildingBlocks.Adapters.Messaging.SystemTextJsonMessageSerializer.Serialize(object! value, System.Type! type) -> byte[]!
+ResQ.BuildingBlocks.Adapters.Messaging.SystemTextJsonMessageSerializer.SystemTextJsonMessageSerializer(System.Text.Json.JsonSerializerOptions? options = null) -> void
+override ResQ.BuildingBlocks.Adapters.Messaging.MessageConsumerService.ExecuteAsync(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.Task!
+override ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.Equals(object? obj) -> bool
+override ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.GetHashCode() -> int
+override ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.ToString() -> string!
+static ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.operator !=(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope? left, ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope? right) -> bool
+static ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.operator ==(ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope? left, ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope? right) -> bool
+static ResQ.BuildingBlocks.Adapters.Messaging.MessagingServiceCollectionExtensions.AddResqMessaging(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!>? configure = null, params System.Reflection.Assembly![]! handlerAssemblies) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
