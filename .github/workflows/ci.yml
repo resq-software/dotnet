@@ -169,8 +169,12 @@ jobs:
         with:
           user: ${{ vars.NUGET_USER }}
       - name: Push
+        # Pass the short-lived key via env, never interpolated directly into the
+        # run script (avoids zizmor template-injection; the shell reads $NUGET_API_KEY).
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
         run: >
           dotnet nuget push "artifacts/*.nupkg"
-          --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}"
+          --api-key "$NUGET_API_KEY"
           --source https://api.nuget.org/v3/index.json
           --skip-duplicate
