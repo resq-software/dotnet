@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using ResQ.BuildingBlocks.Application;
 
 namespace ResQ.BuildingBlocks.Testing;
@@ -8,10 +9,10 @@ namespace ResQ.BuildingBlocks.Testing;
 /// </summary>
 public sealed class RecordingIntegrationEventPublisher : IIntegrationEventPublisher
 {
-    private readonly List<IntegrationEvent> _published = [];
+    private readonly ConcurrentQueue<IntegrationEvent> _published = new();
 
-    /// <summary>Gets the integration events captured so far, in publish order.</summary>
-    public IReadOnlyList<IntegrationEvent> Published => _published;
+    /// <summary>Gets a snapshot of the integration events captured so far, in publish order.</summary>
+    public IReadOnlyList<IntegrationEvent> Published => _published.ToArray();
 
     /// <summary>Captures the supplied integration event and completes.</summary>
     /// <param name="event">The integration event being published.</param>
@@ -20,7 +21,7 @@ public sealed class RecordingIntegrationEventPublisher : IIntegrationEventPublis
     public Task PublishAsync(IntegrationEvent @event, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(@event);
-        _published.Add(@event);
+        _published.Enqueue(@event);
         return Task.CompletedTask;
     }
 }

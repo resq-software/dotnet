@@ -18,6 +18,11 @@ namespace ResQ.BuildingBlocks.Adapters.Persistence;
 /// </remarks>
 public sealed class EfUnitOfWork(DbContext dbContext, IDomainEventDispatcher dispatcher) : IUnitOfWork
 {
+    // Bounds the drain loop: a handler that re-raises events on a still-tracked aggregate would
+    // otherwise spin forever, pinning the DB connection/transaction. Past this many passes we treat
+    // non-convergence as a bug and fail fast.
+    private const int MaxDomainEventDrainIterations = 32;
+
     /// <inheritdoc />
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
@@ -29,8 +34,10 @@ public sealed class EfUnitOfWork(DbContext dbContext, IDomainEventDispatcher dis
     {
         // Drain loop: a handler may raise further domain events (or enqueue rows), so keep dispatching
         // until no tracked aggregate has pending events, then let the underlying save persist everything.
-        while (true)
+        for (var iteration = 0; iteration < MaxDomainEventDrainIterations; iteration++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var aggregates = dbContext.ChangeTracker
                 .Entries<IHasDomainEvents>()
                 .Where(entry => entry.Entity.DomainEvents.Count > 0)
@@ -53,5 +60,9 @@ public sealed class EfUnitOfWork(DbContext dbContext, IDomainEventDispatcher dis
 
             await dispatcher.DispatchAsync(domainEvents, cancellationToken).ConfigureAwait(false);
         }
+
+        throw new InvalidOperationException(
+            $"Domain-event dispatch did not converge after {MaxDomainEventDrainIterations} iterations; " +
+            "a handler is likely re-raising events on a still-tracked aggregate.");
     }
 }
