@@ -18,6 +18,12 @@ public abstract record IntegrationEvent
     public DateTimeOffset OccurredOnUtc { get; init; } = DateTimeOffset.UtcNow;
 #pragma warning restore RS0030
 
-    /// <summary>The logical event type name used for routing and type resolution.</summary>
-    public virtual string EventType => GetType().Name;
+    /// <summary>
+    /// The logical event-type name used for routing and type resolution. Defaults to the namespace-qualified
+    /// CLR type name (<see cref="System.Type.FullName"/>) so two events that share a simple name in different
+    /// namespaces stay distinct on the wire and resolve to the correct CLR type end-to-end (publisher →
+    /// envelope/outbox → dispatcher). Falls back to the simple name only for the (open-generic/edge) types
+    /// whose <see cref="System.Type.FullName"/> is <see langword="null"/>.
+    /// </summary>
+    public virtual string EventType => GetType().FullName ?? GetType().Name;
 }

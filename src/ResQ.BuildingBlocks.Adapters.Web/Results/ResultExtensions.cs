@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using ResQ.BuildingBlocks.Domain;
 
 namespace ResQ.BuildingBlocks.Adapters.Web;
@@ -59,10 +60,39 @@ public static class ResultExtensions
     /// <summary>Maps an <see cref="Error"/> to an RFC 7807 problem result.</summary>
     /// <param name="error">The domain error to translate.</param>
     /// <param name="context">The current HTTP context, used for the trace identifier fallback.</param>
-    /// <returns>A problem result carrying the mapped status and problem details.</returns>
+    /// <returns>
+    /// A problem result that, when executed, resolves the ambient <see cref="ResqWebOptions"/> from the
+    /// request services and applies its <see cref="ResqWebOptions.StatusOverrides"/> and
+    /// <see cref="ResqWebOptions.DocsBaseUri"/> to the mapped problem details.
+    /// </returns>
     public static IResult Problem(this Error error, HttpContext? context = null)
     {
         ArgumentNullException.ThrowIfNull(error);
-        return TypedResults.Problem(ProblemDetailsMapper.ToProblemDetails(error, context));
+        return new ProblemResult(error, context);
+    }
+}
+
+/// <summary>
+/// Deferred <see cref="IResult"/> that builds the RFC 7807 response at execution time, resolving
+/// <see cref="ResqWebOptions"/> (registered as a singleton by <c>AddResqWeb</c>) from the executing
+/// request's services. Deferring is what lets the <c>ToHttpResult</c> helpers — which never receive an
+/// <see cref="HttpContext"/> — still honor the configured <see cref="ResqWebOptions.StatusOverrides"/>
+/// and <see cref="ResqWebOptions.DocsBaseUri"/>. When no options are registered the mapper's built-in
+/// defaults apply, matching the pre-configuration behavior.
+/// </summary>
+internal sealed class ProblemResult(Error error, HttpContext? traceContext) : IResult
+{
+    public async Task ExecuteAsync(HttpContext httpContext)
+    {
+        ArgumentNullException.ThrowIfNull(httpContext);
+
+        var options = httpContext.RequestServices.GetService<ResqWebOptions>();
+        var problem = ProblemDetailsMapper.ToProblemDetails(
+            error,
+            traceContext ?? httpContext,
+            options?.StatusOverrides,
+            options?.DocsBaseUri);
+
+        await TypedResults.Problem(problem).ExecuteAsync(httpContext).ConfigureAwait(false);
     }
 }

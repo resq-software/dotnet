@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Runtime.CompilerServices;
 using ResQ.BuildingBlocks.Application;
 using ResQ.BuildingBlocks.Domain;
 
@@ -19,12 +20,12 @@ public sealed class MetricsBehavior<TRequest, TResponse>(IMeterFactory meterFact
 {
     private const string RequestTag = "request";
 
-    // Cached per closed generic: the factory returns a shared meter for the name, so the instruments are
-    // created once rather than on every (transient) behavior instantiation. Access is via GetInstruments,
-    // whose double-checked lock serializes the one-time build so concurrent first calls cannot each
-    // construct a duplicate set of instruments.
-    private static volatile Instruments? _instruments;
-    private static readonly object InstrumentsLock = new();
+    // Instruments are cached per IMeterFactory (keyed weakly) rather than in a plain process-static field,
+    // so their lifetime tracks the DI container that created the factory. A second in-process host (a
+    // WebApplicationFactory test, a fresh container) gets a new factory and therefore its own instruments,
+    // instead of recording into the first host's orphaned meter — which would silently drop every metric.
+    // ConditionalWeakTable.GetValue builds the set once per factory; entries evict when the factory is GC'd.
+    private static readonly ConditionalWeakTable<IMeterFactory, Instruments> InstrumentsByFactory = new();
 
     /// <inheritdoc />
     public async Task<TResponse> Handle(
@@ -58,19 +59,8 @@ public sealed class MetricsBehavior<TRequest, TResponse>(IMeterFactory meterFact
         }
     }
 
-    private static Instruments GetInstruments(IMeterFactory factory)
-    {
-        var instruments = _instruments;
-        if (instruments is not null)
-        {
-            return instruments;
-        }
-
-        lock (InstrumentsLock)
-        {
-            return _instruments ??= CreateInstruments(factory);
-        }
-    }
+    private static Instruments GetInstruments(IMeterFactory factory) =>
+        InstrumentsByFactory.GetValue(factory, CreateInstruments);
 
     private static Instruments CreateInstruments(IMeterFactory factory)
     {
