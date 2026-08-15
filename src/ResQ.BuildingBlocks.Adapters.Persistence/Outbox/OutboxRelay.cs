@@ -94,15 +94,13 @@ public sealed class OutboxRelay(
         {
             if (!registry.TryResolve(message.Type, out var clrType))
             {
-                message.Attempts++;
-                message.Error = $"No CLR type registered for event type '{message.Type}'.";
+                RecordFailedAttempt(message, $"No CLR type registered for event type '{message.Type}'.");
                 return;
             }
 
             if (serializer.Deserialize(message.Content, clrType) is not IntegrationEvent @event)
             {
-                message.Attempts++;
-                message.Error = $"Payload for event type '{message.Type}' did not deserialize to an integration event.";
+                RecordFailedAttempt(message, $"Payload for event type '{message.Type}' did not deserialize to an integration event.");
                 return;
             }
 
@@ -112,9 +110,30 @@ public sealed class OutboxRelay(
         }
         catch (Exception exception) when (!cancellationToken.IsCancellationRequested)
         {
-            message.Attempts++;
-            message.Error = exception.Message;
             logger.LogError(exception, "Failed to relay outbox message {MessageId}.", message.Id);
+            RecordFailedAttempt(message, exception.Message);
+        }
+    }
+
+    /// <summary>
+    /// Records a failed relay attempt on the row and, when the attempt exhausts
+    /// <see cref="OutboxOptions.MaxAttempts"/>, emits a terminal warning. An exhausted row drops out of the
+    /// poll filter (<c>Attempts &lt; MaxAttempts</c>) and is never published again, so this warning is the
+    /// only signal operators get that a message is stranded and needs manual inspection.
+    /// </summary>
+    private void RecordFailedAttempt(OutboxMessage message, string error)
+    {
+        message.Attempts++;
+        message.Error = error;
+
+        if (message.Attempts >= options.Value.MaxAttempts)
+        {
+            logger.LogWarning(
+                "Outbox message {MessageId} of type {MessageType} exhausted its {MaxAttempts} relay attempts and will no longer be retried; it requires manual inspection. Last error: {Error}",
+                message.Id,
+                message.Type,
+                options.Value.MaxAttempts,
+                error);
         }
     }
 

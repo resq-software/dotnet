@@ -29,6 +29,7 @@ ResQ.BuildingBlocks.Domain.Error.Type.init -> void
 ResQ.BuildingBlocks.Domain.ErrorType
 ResQ.BuildingBlocks.Domain.ErrorType.Conflict = 3 -> ResQ.BuildingBlocks.Domain.ErrorType
 ResQ.BuildingBlocks.Domain.ErrorType.Failure = 0 -> ResQ.BuildingBlocks.Domain.ErrorType
+ResQ.BuildingBlocks.Domain.ErrorType.Forbidden = 5 -> ResQ.BuildingBlocks.Domain.ErrorType
 ResQ.BuildingBlocks.Domain.ErrorType.NotFound = 2 -> ResQ.BuildingBlocks.Domain.ErrorType
 ResQ.BuildingBlocks.Domain.ErrorType.Unauthorized = 4 -> ResQ.BuildingBlocks.Domain.ErrorType
 ResQ.BuildingBlocks.Domain.ErrorType.Validation = 1 -> ResQ.BuildingBlocks.Domain.ErrorType
@@ -50,9 +51,11 @@ ResQ.BuildingBlocks.Domain.ValueObject.Equals(ResQ.BuildingBlocks.Domain.ValueOb
 ResQ.BuildingBlocks.Domain.ValueObject.ValueObject() -> void
 static readonly ResQ.BuildingBlocks.Domain.Error.None -> ResQ.BuildingBlocks.Domain.Error!
 static ResQ.BuildingBlocks.Domain.Error.Conflict(string! code, string! message) -> ResQ.BuildingBlocks.Domain.Error!
+static ResQ.BuildingBlocks.Domain.Error.Forbidden(string! code, string! message) -> ResQ.BuildingBlocks.Domain.Error!
 static ResQ.BuildingBlocks.Domain.Error.NotFound(string! code, string! message) -> ResQ.BuildingBlocks.Domain.Error!
 static ResQ.BuildingBlocks.Domain.Error.operator !=(ResQ.BuildingBlocks.Domain.Error? left, ResQ.BuildingBlocks.Domain.Error? right) -> bool
 static ResQ.BuildingBlocks.Domain.Error.operator ==(ResQ.BuildingBlocks.Domain.Error? left, ResQ.BuildingBlocks.Domain.Error? right) -> bool
+static ResQ.BuildingBlocks.Domain.Error.Unauthorized(string! code, string! message) -> ResQ.BuildingBlocks.Domain.Error!
 static ResQ.BuildingBlocks.Domain.Error.Validation(string! code, string! message) -> ResQ.BuildingBlocks.Domain.Error!
 static ResQ.BuildingBlocks.Domain.Guard.AgainstNonPositive(int value, string? name = null) -> int
 static ResQ.BuildingBlocks.Domain.Guard.AgainstNull<T>(T? value, string? name = null) -> T
