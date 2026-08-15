@@ -1,0 +1,39 @@
+# src-only analyzer policy. Layers on the repo-root .editorconfig (this file is NOT root=true).
+# Scoped here so the stricter Meziantou / public-API bar applies to the shipped building blocks only,
+# never to samples/ or the generated template (which do not reference these analyzers anyway).
+
+[*.cs]
+
+# --- Meziantou.Analyzer: high-signal correctness rules promoted to error --------------------------
+
+# MA0004: await a Task/ValueTask with ConfigureAwait(false) in library code.
+dotnet_diagnostic.MA0004.severity = error
+
+# MA0011: pass an explicit IFormatProvider to Parse/ToString/format calls (culture correctness).
+dotnet_diagnostic.MA0011.severity = error
+
+# MA0042 / MA0045: no sync-over-async — do not block on tasks in async or sync methods.
+dotnet_diagnostic.MA0042.severity = error
+dotnet_diagnostic.MA0045.severity = error
+
+# MA0065 / MA0066: do not rely on the default (reflection-based) struct Equals/GetHashCode.
+dotnet_diagnostic.MA0065.severity = error
+dotnet_diagnostic.MA0066.severity = error
+
+# --- Noisy / not-applicable rules turned off (documented, intentional) ---------------------------
+
+# MA0048 (file name must match type name): this repo deliberately groups cohesive types per file
+# (Primitives.cs, Results.cs, Abstractions.cs, Behaviors.cs, Sender.cs). The one-type-per-file rule
+# fights that intentional organization, so it is pure noise here.
+dotnet_diagnostic.MA0048.severity = none
+
+# MA0158 (use System.Threading.Lock): the libraries multi-target net8.0, where System.Threading.Lock
+# does not exist. Adopting it would break the net8 build, so keep the classic object-monitor 'lock'.
+dotnet_diagnostic.MA0158.severity = none
+
+# RS0026 (do not add multiple overloads with optional parameters): the public surface intentionally
+# uses receiver/first-argument-disambiguated convenience overloads with a trailing optional parameter —
+# the CQRS ISender.Send overloads (optional CancellationToken) and the Result ToHttpResult overloads.
+# This is the standard .NET async/convenience shape (cf. HttpClient, EF Core, MediatR); the source
+# back-compat guard the rule enforces does not fit it. Off for src; every other RS00xx rule stays on.
+dotnet_diagnostic.RS0026.severity = none

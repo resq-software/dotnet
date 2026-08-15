@@ -33,8 +33,14 @@ public sealed class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidat
         if (validatorList.Count != 0)
         {
             var context = new ValidationContext<TRequest>(request);
-            var failures = validatorList
-                .Select(validator => validator.Validate(context))
+
+            // Await ValidateAsync so async validators (e.g. ones that hit a store) run correctly and the
+            // CancellationToken is honored; running them concurrently keeps the pipeline stage cheap.
+            var results = await Task.WhenAll(
+                validatorList.Select(validator => validator.ValidateAsync(context, cancellationToken)))
+                .ConfigureAwait(false);
+
+            var failures = results
                 .SelectMany(result => result.Errors)
                 .Where(failure => failure is not null)
                 .ToList();
@@ -45,7 +51,7 @@ public sealed class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidat
             }
         }
 
-        return await next();
+        return await next().ConfigureAwait(false);
     }
 }
 
@@ -61,7 +67,7 @@ public sealed class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior
     {
         var requestName = typeof(TRequest).Name;
         logger.LogInformation("Handling {Request}", requestName);
-        var response = await next();
+        var response = await next().ConfigureAwait(false);
         logger.LogInformation("Handled {Request}", requestName);
         return response;
     }

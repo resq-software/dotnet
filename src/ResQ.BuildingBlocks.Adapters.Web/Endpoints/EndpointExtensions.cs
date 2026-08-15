@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ public static class EndpointExtensions
     /// <param name="services">The service collection.</param>
     /// <param name="assemblies">The assemblies to scan.</param>
     /// <returns>The same service collection for chaining.</returns>
+    [RequiresUnreferencedCode("Scans assemblies for IEndpoint implementations; their types must be preserved when trimming.")]
     public static IServiceCollection AddResqEndpoints(this IServiceCollection services, params Assembly[] assemblies)
     {
         ArgumentNullException.ThrowIfNull(services);

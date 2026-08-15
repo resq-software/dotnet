@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#
+# ResQ.BuildingBlocks commit-msg hook: enforce Conventional Commits.
+#
+# NOT enabled automatically. Opt in once per clone:
+#     git config core.hooksPath .githooks
+# Bypass for a single commit:
+#     GIT_HOOKS_SKIP=1 git commit ...
+#
+set -euo pipefail
+
+if [ "${GIT_HOOKS_SKIP:-}" = "1" ]; then
+  exit 0
+fi
+
+msg_file="$1"
+
+# Subject = first line that is neither blank nor a comment.
+subject="$(grep -m1 -vE '^[[:space:]]*(#|$)' "$msg_file" || true)"
+
+# Let git-generated merge/revert and fixup/squash subjects through untouched.
+case "$subject" in
+  "Merge "* | "Revert "* | "fixup! "* | "squash! "*) exit 0 ;;
+esac
+
+# <type>[optional scope][!]: <description>
+pattern='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9._/-]+\))?(!)?: .+'
+
+if ! printf '%s' "$subject" | grep -Eq "$pattern"; then
+  {
+    echo "commit-msg: BLOCKED — subject is not a Conventional Commit."
+    echo "  got:      ${subject:-<empty>}"
+    echo "  expected: <type>[optional scope][!]: <description>"
+    echo "  types:    build chore ci docs feat fix perf refactor revert style test"
+    echo "  example:  feat(application): add ValidationBehavior"
+    echo "  bypass:   GIT_HOOKS_SKIP=1 git commit ..."
+  } >&2
+  exit 1
+fi

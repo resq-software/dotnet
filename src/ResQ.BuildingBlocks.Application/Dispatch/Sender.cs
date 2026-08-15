@@ -19,6 +19,7 @@ public sealed class Sender(IServiceProvider provider) : ISender
     private static readonly ConcurrentDictionary<Type, RequestHandlerWrapperBase> Wrappers = new();
 
     /// <inheritdoc />
+    [RequiresDynamicCode("Resolves a closed generic query-handler wrapper via MakeGenericType.")]
     public async Task<Result<TResponse>> Send<TResponse>(IQuery<TResponse> query, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(query);
@@ -32,6 +33,7 @@ public sealed class Sender(IServiceProvider provider) : ISender
     }
 
     /// <inheritdoc />
+    [RequiresDynamicCode("Resolves a closed generic command-handler wrapper via MakeGenericType.")]
     public async Task<Result> Send(ICommand command, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(command);
@@ -44,6 +46,7 @@ public sealed class Sender(IServiceProvider provider) : ISender
     }
 
     /// <inheritdoc />
+    [RequiresDynamicCode("Resolves a closed generic command-handler wrapper via MakeGenericType.")]
     public async Task<Result<TResponse>> Send<TResponse>(ICommand<TResponse> command, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(command);

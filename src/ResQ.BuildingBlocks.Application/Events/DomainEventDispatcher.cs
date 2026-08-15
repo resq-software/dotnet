@@ -19,6 +19,7 @@ public sealed class DomainEventDispatcher(IServiceProvider provider) : IDomainEv
     private static readonly ConcurrentDictionary<Type, DomainEventInvoker> Invokers = new();
 
     /// <inheritdoc />
+    [RequiresDynamicCode("Builds a closed generic invoker per event CLR type via MakeGenericType.")]
     public async Task DispatchAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(domainEvents);

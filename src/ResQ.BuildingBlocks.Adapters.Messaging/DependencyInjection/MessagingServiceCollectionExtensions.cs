@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -18,6 +19,7 @@ public static class MessagingServiceCollectionExtensions
     /// <param name="configure">An optional callback to pick the transport and reliability components.</param>
     /// <param name="handlerAssemblies">Assemblies scanned for integration events and their handlers.</param>
     /// <returns>The same <paramref name="services"/> for chaining.</returns>
+    [RequiresUnreferencedCode("Scans assemblies for integration events and their handlers; their types must be preserved when trimming.")]
     public static IServiceCollection AddResqMessaging(
         this IServiceCollection services,
         Action<MessagingBuilder>? configure = null,

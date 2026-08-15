@@ -64,44 +64,47 @@ public abstract class MessageConsumerService(
     {
         try
         {
-            await using var scope = scopes.CreateAsyncScope();
-            var services = scope.ServiceProvider;
-            var dispatcher = services.GetRequiredService<IntegrationEventDispatcher>();
-            var handlerName = GetType().Name;
-
-            var idempotency = opts.EnableIdempotency
-                ? services.GetRequiredService<IIdempotencyStore>()
-                : null;
-
-            if (idempotency is not null &&
-                await idempotency.HasProcessedAsync(message.MessageId, handlerName, ct).ConfigureAwait(false))
+            var scope = scopes.CreateAsyncScope();
+            await using (scope.ConfigureAwait(false))
             {
-                await source.AcknowledgeAsync(message, ct).ConfigureAwait(false);
-                return;
-            }
+                var services = scope.ServiceProvider;
+                var dispatcher = services.GetRequiredService<IntegrationEventDispatcher>();
+                var handlerName = GetType().Name;
 
-            try
-            {
-                await pipeline.ExecuteAsync(
-                    async token => await dispatcher.DispatchAsync(message, token).ConfigureAwait(false),
-                    ct).ConfigureAwait(false);
+                var idempotency = opts.EnableIdempotency
+                    ? services.GetRequiredService<IIdempotencyStore>()
+                    : null;
 
-                if (idempotency is not null)
+                if (idempotency is not null &&
+                    await idempotency.HasProcessedAsync(message.MessageId, handlerName, ct).ConfigureAwait(false))
                 {
-                    await idempotency.MarkProcessedAsync(message.MessageId, handlerName, ct).ConfigureAwait(false);
+                    await source.AcknowledgeAsync(message, ct).ConfigureAwait(false);
+                    return;
                 }
 
-                await source.AcknowledgeAsync(message, ct).ConfigureAwait(false);
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                // Retries are exhausted here — the Polly pipeline already ran every transient attempt
-                // internally. Take a single terminal action: dead-letter the message, then acknowledge so
-                // the transport drops it. Do NOT also nack-requeue; pairing dead-letter with a requeue would
-                // redeliver a poison message forever.
-                var sink = services.GetRequiredService<IDeadLetterSink>();
-                await sink.SendAsync(message, ex, opts.Retry.MaxAttempts, ct).ConfigureAwait(false);
-                await source.AcknowledgeAsync(message, ct).ConfigureAwait(false);
+                try
+                {
+                    await pipeline.ExecuteAsync(
+                        async token => await dispatcher.DispatchAsync(message, token).ConfigureAwait(false),
+                        ct).ConfigureAwait(false);
+
+                    if (idempotency is not null)
+                    {
+                        await idempotency.MarkProcessedAsync(message.MessageId, handlerName, ct).ConfigureAwait(false);
+                    }
+
+                    await source.AcknowledgeAsync(message, ct).ConfigureAwait(false);
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    // Retries are exhausted here — the Polly pipeline already ran every transient attempt
+                    // internally. Take a single terminal action: dead-letter the message, then acknowledge so
+                    // the transport drops it. Do NOT also nack-requeue; pairing dead-letter with a requeue would
+                    // redeliver a poison message forever.
+                    var sink = services.GetRequiredService<IDeadLetterSink>();
+                    await sink.SendAsync(message, ex, opts.Retry.MaxAttempts, ct).ConfigureAwait(false);
+                    await source.AcknowledgeAsync(message, ct).ConfigureAwait(false);
+                }
             }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)

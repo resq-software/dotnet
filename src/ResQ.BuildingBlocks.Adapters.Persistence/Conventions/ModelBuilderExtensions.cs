@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,7 @@ public static class ModelBuilderExtensions
     /// <param name="modelBuilder">The model builder to configure.</param>
     /// <param name="assembly">The assembly to scan for entity configurations.</param>
     /// <returns>The same model builder, for chaining.</returns>
+    [RequiresUnreferencedCode("Scans the assembly for IEntityTypeConfiguration implementations; their types must be preserved when trimming.")]
     public static ModelBuilder ApplyConfigurationsFrom(this ModelBuilder modelBuilder, Assembly assembly)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(assembly);

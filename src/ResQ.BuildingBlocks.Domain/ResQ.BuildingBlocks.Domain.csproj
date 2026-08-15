@@ -4,6 +4,10 @@
     <PackageId>ResQ.BuildingBlocks.Domain</PackageId>
     <Description>Hexagonal/DDD domain primitives — Entity, AggregateRoot, ValueObject, domain events, Result/Error, and guard clauses. The inner core: zero dependencies, no infrastructure.</Description>
     <PackageTags>ddd;domain;entity;value-object;result;guard;building-blocks</PackageTags>
+
+    <!-- The domain core is dependency-free and reflection-free: hold it to the AOT/trim bar so the
+         innermost layer stays publishable into an AOT app. Enables the trim/AOT analyzers here only. -->
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <!-- Intentionally dependency-free: the domain core depends on nothing outward. -->
