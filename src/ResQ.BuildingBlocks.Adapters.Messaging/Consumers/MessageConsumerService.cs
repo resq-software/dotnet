@@ -28,9 +28,19 @@ public abstract class MessageConsumerService(
 {
     private const double JitterFraction = 0.2;
 
+    // Floor for the supervision back-off so a source that faults instantly (e.g. RetryOptions.BaseDelay set
+    // to zero) cannot spin a hot re-subscribe loop while the broker is down.
+    private static readonly TimeSpan MinBackoff = TimeSpan.FromMilliseconds(500);
+
     /// <summary>Drains the source until stopped, then awaits any in-flight work.</summary>
     /// <param name="stoppingToken">Signals that the service should stop.</param>
     /// <returns>A task representing the consumer loop.</returns>
+    /// <remarks>
+    /// The drain runs inside a supervision loop: a fault surfaced by <see cref="IMessageSource.ReadAllAsync"/>
+    /// (for example a dropped broker connection) is logged, backed off, and the stream is re-subscribed
+    /// rather than allowed to tear the host down. Only cancellation of <paramref name="stoppingToken"/> — or
+    /// the source completing its stream on its own — exits the loop; in-flight work is then awaited.
+    /// </remarks>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var opts = options.Value;
@@ -38,21 +48,62 @@ public abstract class MessageConsumerService(
         var pipeline = BuildPipeline(opts.Retry);
         var inFlight = new List<Task>();
 
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            await foreach (var message in source.ReadAllAsync(stoppingToken).ConfigureAwait(false))
+            try
             {
-                await semaphore.WaitAsync(stoppingToken).ConfigureAwait(false);
-                inFlight.Add(ProcessAsync(message, opts, pipeline, semaphore, stoppingToken));
-                inFlight.RemoveAll(static task => task.IsCompleted);
+                await foreach (var message in source.ReadAllAsync(stoppingToken).ConfigureAwait(false))
+                {
+                    await semaphore.WaitAsync(stoppingToken).ConfigureAwait(false);
+                    inFlight.Add(ProcessAsync(message, opts, pipeline, semaphore, stoppingToken));
+                    inFlight.RemoveAll(static task => task.IsCompleted);
+                }
+
+                // The source completed its stream without being cancelled (e.g. a closed channel). Nothing
+                // more will ever arrive, so there is nothing left to supervise — stop draining.
+                break;
             }
-        }
-        catch (OperationCanceledException)
-        {
-            // Graceful shutdown requested — fall through and drain in-flight work.
+            catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
+            {
+                // A source-level fault (dropped broker connection, a stray cancellation not tied to our
+                // stopping token, and so on) must never stop the host. Log it, back off, then re-enter the
+                // drain and re-subscribe. The back-off honors the stopping token and the loop re-checks it.
+                logger.LogError(ex, "Message source faulted while draining; backing off before re-subscribing.");
+                await BackOffAsync(opts.Retry, stoppingToken).ConfigureAwait(false);
+            }
+            catch (Exception) when (stoppingToken.IsCancellationRequested)
+            {
+                // Graceful shutdown requested (typically an OperationCanceledException from the source): stop
+                // draining new messages and fall through to await in-flight work.
+                break;
+            }
         }
 
         await Task.WhenAll(inFlight).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Waits out a supervision back-off before the source is re-subscribed, honoring the stopping token. Uses
+    /// the retry policy's base delay (floored so a persistently faulting source cannot spin a hot loop) with
+    /// the same jitter as the per-message pipeline, avoiding a thundering re-subscribe across replicas.
+    /// </summary>
+    private static async Task BackOffAsync(RetryOptions retry, CancellationToken stoppingToken)
+    {
+        var baseDelayMs = Math.Max(retry.BaseDelay.TotalMilliseconds, MinBackoff.TotalMilliseconds);
+        var delayMs = ApplyJitter(baseDelayMs, retry.UseJitter);
+        if (delayMs <= 0)
+        {
+            return;
+        }
+
+        try
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(delayMs), stoppingToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // Shutdown raced the back-off delay; return so the supervision loop observes the token and exits.
+        }
     }
 
     private async Task ProcessAsync(
@@ -127,18 +178,27 @@ public abstract class MessageConsumerService(
                 DelayGenerator = args =>
                 {
                     var factor = Math.Pow(retry.BackoffMultiplier, args.AttemptNumber);
-                    var delayMs = retry.BaseDelay.TotalMilliseconds * factor;
-
-                    if (retry.UseJitter && delayMs > 0)
-                    {
-                        var window = (int)Math.Clamp(delayMs * JitterFraction * 2, 1d, int.MaxValue);
-                        var offset = RandomNumberGenerator.GetInt32(0, window) - (delayMs * JitterFraction);
-                        delayMs = Math.Max(0, delayMs + offset);
-                    }
-
+                    var delayMs = ApplyJitter(retry.BaseDelay.TotalMilliseconds * factor, retry.UseJitter);
                     return new ValueTask<TimeSpan?>(TimeSpan.FromMilliseconds(delayMs));
                 },
             })
             .Build();
+    }
+
+    /// <summary>
+    /// Spreads <paramref name="delayMs"/> by up to ±<see cref="JitterFraction"/> using a cryptographically
+    /// strong RNG (never <see cref="System.Random"/>), so concurrent consumers do not retry in lockstep.
+    /// Returns the delay unchanged when jitter is disabled or the delay is non-positive.
+    /// </summary>
+    private static double ApplyJitter(double delayMs, bool useJitter)
+    {
+        if (!useJitter || delayMs <= 0)
+        {
+            return delayMs;
+        }
+
+        var window = (int)Math.Clamp(delayMs * JitterFraction * 2, 1d, int.MaxValue);
+        var offset = RandomNumberGenerator.GetInt32(0, window) - (delayMs * JitterFraction);
+        return Math.Max(0, delayMs + offset);
     }
 }
