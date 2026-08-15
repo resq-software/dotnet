@@ -24,6 +24,27 @@ Reusable .NET building blocks for **Clean / Hexagonal (Ports & Adapters)** archi
 
 Plus `templates/resq-service` (a `dotnet new` template) and `samples/Widgets` (a throwaway, non-moat reference service showing the whole hexagon).
 
+## Operational notes
+
+### Outbox relay is single-instance
+
+> ⚠️ **Run exactly one `OutboxRelay` instance per outbox table.** The relay polls, publishes, and stamps
+> rows but does **not** claim them first, so two instances against the same table would each publish every
+> pending row (duplicate delivery). Downstream consumers dedupe via the inbox/idempotency store, so
+> duplicates are safe but wasteful. In a multi-replica deployment, gate the hosted service behind
+> leader election, a single-replica deployment, or a scheduled singleton job.
+>
+> A provider-agnostic optimistic row claim (`LockedUntil`/`ProcessorId` or a `RowVersion` + WHERE-guarded
+> `ExecuteUpdate`) was evaluated and deliberately deferred: a clean batch claim needs an `ExecuteUpdate`
+> over an ordered, limited query, which EF Core cannot translate uniformly across providers (SQLite has no
+> `UPDATE … LIMIT`) without dropping to raw SQL. Until a claim is added, single-instance operation is the
+> supported contract.
+>
+> A transient broker outage does **not** strand the backlog: a publish failure keeps the row's attempt
+> budget intact, abandons the current batch, and retries the whole backlog on the next poll. Only
+> message-specific faults (unresolvable event type, undeserializable payload) consume attempts and park a
+> poison row after `OutboxOptions.MaxAttempts`.
+
 ## Repo mechanics (inspired by `dotnet/extensions`)
 
 - **Central Package Management** — every version pinned once in `Directory.Packages.props`.

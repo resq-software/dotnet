@@ -20,7 +20,9 @@ public class ReadRepository<TAggregate, TId>(DbContext dbContext) : IReadReposit
 
     /// <inheritdoc />
     public async Task<TAggregate?> GetByIdAsync(TId id, CancellationToken ct = default) =>
-        await Set.FindAsync([id], ct).ConfigureAwait(false);
+        // No-tracking to honor the read-only contract: FindAsync tracks (and returns tracked entities),
+        // which would let callers mutate results and defeat the repository's read-only guarantee.
+        await Set.AsNoTracking().FirstOrDefaultAsync(e => e.Id!.Equals(id), ct).ConfigureAwait(false);
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<TAggregate>> ListAsync(

@@ -20,14 +20,27 @@ public sealed class EfIdempotencyStore(DbContext dbContext, IClock clock) : IIde
     /// <inheritdoc />
     public async Task MarkProcessedAsync(string messageId, string handler, CancellationToken ct)
     {
-        dbContext.Set<InboxMessage>().Add(new InboxMessage
+        var entry = dbContext.Set<InboxMessage>().Add(new InboxMessage
         {
             MessageId = messageId,
             Handler = handler,
             ProcessedOnUtc = clock.UtcNow,
         });
 
-        // Persist immediately: the consumer flow has no separate unit-of-work commit for the inbox row.
-        await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+        try
+        {
+            // Persist immediately: the consumer flow has no separate unit-of-work commit for the inbox row.
+            await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+        }
+        catch (DbUpdateException)
+        {
+            // Check-then-act (HasProcessedAsync then insert) is not atomic: a concurrent consumer can insert
+            // the same (messageId, handler) row between the check and this save, so the unique/primary-key
+            // insert loses the race and throws. That is precisely the "already processed" outcome this store
+            // exists to guarantee, so absorb it as a no-op rather than surfacing a failure — otherwise a
+            // message whose handler already succeeded would be dead-lettered. Detach the failed insert so the
+            // shared, tracked context does not replay it on a later SaveChanges.
+            entry.State = EntityState.Detached;
+        }
     }
 }

@@ -39,6 +39,14 @@ public sealed class TransactionBehavior<TRequest, TResponse>(
 
         return await strategy.ExecuteAsync(async () =>
         {
+            // Under EnableRetryOnFailure the strategy re-invokes this lambda after a transient failure.
+            // A previous attempt may have left the handler's inserts/updates and raised domain events in
+            // the ChangeTracker; replaying the handler over that dirty state would double-insert and
+            // re-raise events. Clear it so every attempt starts from a clean slate. On the first attempt
+            // the tracker is already empty (this behavior is the innermost, running just around the
+            // handler), so the clear is a no-op there.
+            dbContext.ChangeTracker.Clear();
+
             // 'await using' rolls the transaction back on dispose if CommitAsync was not reached,
             // so an exception thrown by the handler unwinds cleanly without an explicit catch.
             var transaction = await dbContext.Database

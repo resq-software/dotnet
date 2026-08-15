@@ -51,12 +51,14 @@ public sealed class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidat
         var validatorList = validators as IReadOnlyList<IValidator<TRequest>> ?? validators.ToList();
         if (validatorList.Count != 0)
         {
-            var context = new ValidationContext<TRequest>(request);
-
             // Await ValidateAsync so async validators (e.g. ones that hit a store) run correctly and the
             // CancellationToken is honored; running them concurrently keeps the pipeline stage cheap.
+            // Each validator gets its own ValidationContext: FluentValidation mutates per-run state on the
+            // context (shared/root context data, the property chain), so sharing one instance across
+            // concurrently-awaited async validators corrupts that state and yields wrong failures.
             var results = await Task.WhenAll(
-                validatorList.Select(validator => validator.ValidateAsync(context, cancellationToken)))
+                validatorList.Select(validator =>
+                    validator.ValidateAsync(new ValidationContext<TRequest>(request), cancellationToken)))
                 .ConfigureAwait(false);
 
             var failures = results
