@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -25,6 +26,13 @@ namespace ResQ.BuildingBlocks.ServiceDefaults;
 public static class ServiceDefaultsExtensions
 {
     private const string OtlpEndpointVariable = "OTEL_EXPORTER_OTLP_ENDPOINT";
+
+    /// <summary>The readiness/health endpoint path, shared by <see cref="MapDefaultEndpoints"/> and the tracing filter.</summary>
+    private const string HealthEndpointPath = "/health";
+
+    /// <summary>The liveness endpoint path, shared by <see cref="MapDefaultEndpoints"/> and the tracing filter.</summary>
+    private const string AliveEndpointPath = "/alive";
+
     private static readonly string[] LiveTags = ["live"];
 
     /// <summary>
@@ -61,9 +69,10 @@ public static class ServiceDefaultsExtensions
     /// <summary>
     /// Configures OpenTelemetry logging, metrics, and tracing on <paramref name="builder"/>. Metrics add
     /// ASP.NET Core, HTTP-client, and runtime instrumentation plus the <see cref="ResqDiagnostics.MeterName"/>
-    /// meter; tracing adds ASP.NET Core and HTTP-client sources plus the
-    /// <see cref="ResqDiagnostics.ActivitySourceName"/> source. The OTLP exporter is enabled only when the
-    /// <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> configuration value is set.
+    /// meter; tracing adds ASP.NET Core (filtering out the health probe endpoints) and HTTP-client sources
+    /// plus both the <see cref="ResqDiagnostics.ActivitySourceName"/> source and the host app's own
+    /// <c>ApplicationName</c> source (so an idiomatic <c>new ActivitySource(ApplicationName)</c> emits spans).
+    /// The OTLP exporter is enabled only when the <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> configuration value is set.
     /// </summary>
     /// <typeparam name="TBuilder">The host application builder type.</typeparam>
     /// <param name="builder">The host application builder.</param>
@@ -86,9 +95,11 @@ public static class ServiceDefaultsExtensions
                 .AddRuntimeInstrumentation()
                 .AddMeter(ResqDiagnostics.MeterName))
             .WithTracing(tracing => tracing
-                .AddAspNetCoreInstrumentation()
+                .AddAspNetCoreInstrumentation(instrumentation =>
+                    instrumentation.Filter = context => !IsHealthProbeRequest(context.Request.Path))
                 .AddHttpClientInstrumentation()
-                .AddSource(ResqDiagnostics.ActivitySourceName));
+                .AddSource(ResqDiagnostics.ActivitySourceName)
+                .AddSource(builder.Environment.ApplicationName));
 
         AddOpenTelemetryExporters(builder);
 
@@ -126,8 +137,8 @@ public static class ServiceDefaultsExtensions
 
         if (!app.Environment.IsProduction())
         {
-            app.MapHealthChecks("/health");
-            app.MapHealthChecks("/alive", new HealthCheckOptions
+            app.MapHealthChecks(HealthEndpointPath);
+            app.MapHealthChecks(AliveEndpointPath, new HealthCheckOptions
             {
                 Predicate = registration => registration.Tags.Contains("live"),
             });
@@ -135,6 +146,15 @@ public static class ServiceDefaultsExtensions
 
         return app;
     }
+
+    /// <summary>
+    /// True when the request targets a health probe endpoint (<see cref="HealthEndpointPath"/> or
+    /// <see cref="AliveEndpointPath"/>). Orchestrators poll these on a tight interval; excluding them from
+    /// tracing keeps zero-value probe spans out of the trace stream and off the OTLP bill.
+    /// </summary>
+    private static bool IsHealthProbeRequest(PathString path) =>
+        path.Equals(HealthEndpointPath, StringComparison.OrdinalIgnoreCase)
+        || path.Equals(AliveEndpointPath, StringComparison.OrdinalIgnoreCase);
 
     private static void AddOpenTelemetryExporters<TBuilder>(TBuilder builder)
         where TBuilder : IHostApplicationBuilder

@@ -35,6 +35,7 @@ public static class ProblemDetailsMapper
             ErrorType.NotFound => StatusCodes.Status404NotFound,
             ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
             _ => StatusCodes.Status500InternalServerError,
         };
     }
@@ -88,6 +89,7 @@ public static class ProblemDetailsMapper
         ErrorType.NotFound => "Resource not found",
         ErrorType.Conflict => "Conflict",
         ErrorType.Unauthorized => "Unauthorized",
+        ErrorType.Forbidden => "Forbidden",
         _ => "Server error",
     };
 }
