@@ -13,29 +13,43 @@ namespace ResQ.BuildingBlocks.Adapters.Persistence;
 public sealed class AuditInterceptor(IClock clock) : SaveChangesInterceptor
 {
     /// <inheritdoc />
+    public override InterceptionResult<int> SavingChanges(
+        DbContextEventData eventData,
+        InterceptionResult<int> result)
+    {
+        Stamp(eventData.Context);
+        return base.SavingChanges(eventData, result);
+    }
+
+    /// <inheritdoc />
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
         InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
-        var context = eventData.Context;
-        if (context is not null)
+        Stamp(eventData.Context);
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+
+    private void Stamp(DbContext? context)
+    {
+        if (context is null)
         {
-            var now = clock.UtcNow;
-            foreach (var entry in context.ChangeTracker.Entries<IAuditable>())
-            {
-                if (entry.State == EntityState.Added)
-                {
-                    entry.Entity.SetCreated(now);
-                    entry.Entity.SetModified(now);
-                }
-                else if (entry.State == EntityState.Modified)
-                {
-                    entry.Entity.SetModified(now);
-                }
-            }
+            return;
         }
 
-        return base.SavingChangesAsync(eventData, result, cancellationToken);
+        var now = clock.UtcNow;
+        foreach (var entry in context.ChangeTracker.Entries<IAuditable>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.SetCreated(now);
+                entry.Entity.SetModified(now);
+            }
+            else if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.SetModified(now);
+            }
+        }
     }
 }

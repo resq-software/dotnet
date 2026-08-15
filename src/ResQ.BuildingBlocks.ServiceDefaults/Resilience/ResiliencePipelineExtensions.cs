@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
+using Polly.Timeout;
 using ResQ.BuildingBlocks.Domain;
 
 namespace ResQ.BuildingBlocks.ServiceDefaults;
@@ -59,7 +60,10 @@ public static class ResiliencePipelineExtensions
     }
 
     private static ValueTask<bool> ShouldRetry(RetryPredicateArguments<object> args) =>
-        ShouldHandleOutcome(args.Outcome) ? PredicateResult.True() : PredicateResult.False();
+        ShouldHandleOutcome(args.Outcome)
+            && args.Outcome.Exception is not BrokenCircuitException and not TimeoutRejectedException
+            ? PredicateResult.True()
+            : PredicateResult.False();
 
     private static ValueTask<bool> ShouldBreak(CircuitBreakerPredicateArguments<object> args) =>
         ShouldHandleOutcome(args.Outcome) ? PredicateResult.True() : PredicateResult.False();

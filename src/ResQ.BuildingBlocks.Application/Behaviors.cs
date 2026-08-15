@@ -128,8 +128,16 @@ public sealed class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior
     {
         var requestName = typeof(TRequest).Name;
         logger.LogInformation("Handling {Request}", requestName);
-        var response = await next().ConfigureAwait(false);
-        logger.LogInformation("Handled {Request}", requestName);
-        return response;
+        try
+        {
+            var response = await next().ConfigureAwait(false);
+            logger.LogInformation("Handled {Request}", requestName);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed {Request}", requestName);
+            throw;
+        }
     }
 }

@@ -1,3 +1,4 @@
+override ResQ.BuildingBlocks.Adapters.Persistence.AuditInterceptor.SavingChanges(Microsoft.EntityFrameworkCore.Diagnostics.DbContextEventData! eventData, Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int> result) -> Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int>
 override ResQ.BuildingBlocks.Adapters.Persistence.AuditInterceptor.SavingChangesAsync(Microsoft.EntityFrameworkCore.Diagnostics.DbContextEventData! eventData, Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int> result, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int>>
 ResQ.BuildingBlocks.Adapters.Persistence.AuditInterceptor
 ResQ.BuildingBlocks.Adapters.Persistence.AuditInterceptor.AuditInterceptor(ResQ.BuildingBlocks.Application.IClock! clock) -> void

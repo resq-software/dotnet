@@ -22,7 +22,7 @@ services.AddResqMessaging(
     typeof(SomethingHappened).Assembly);  // scans IntegrationEvent subtypes + handlers
 ```
 
-`AddResqMessaging` registers the serializer, a registry populated from the scanned assemblies, the dispatcher, the discovered `IIntegrationEventHandler<>` implementations (scoped), and the default `NullIdempotencyStore` + `LoggingDeadLetterSink`. Swap components with `UsePublisher<T>()`, `AddConsumer<TSource>()`, and `UseDeadLetterSink<T>()`.
+`AddResqMessaging` registers the serializer, a registry populated from the scanned assemblies, the dispatcher, the discovered `IIntegrationEventHandler<>` implementations (scoped), and the default `NullIdempotencyStore` + `LoggingDeadLetterSink`. Swap components with `UsePublisher<T>()`, `AddMessageSource<TSource>()` (or `AddKeyedMessageSource<TSource>(key)` to bind distinct sources to distinct consumers), and `UseDeadLetterSink<T>()`.
 
 To run a consumer, subclass `MessageConsumerService` and register it as a hosted service; the subclass name is the idempotency handler key. A durable idempotency store (e.g. the EF inbox from `Adapters.Persistence`) or dead-letter sink registered elsewhere is honored automatically.
 

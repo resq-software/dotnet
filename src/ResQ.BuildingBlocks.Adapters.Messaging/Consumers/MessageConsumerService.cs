@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,10 @@ namespace ResQ.BuildingBlocks.Adapters.Messaging;
 /// its integration-event handlers. Processing is bounded by <see cref="ConsumerOptions.MaxConcurrency"/>,
 /// short-circuited by the idempotency store, wrapped in a Polly retry pipeline built from
 /// <see cref="RetryOptions"/>, and dead-lettered when retries are exhausted. In-flight work is drained on
-/// shutdown. Subclass this to bind a concrete source; the subclass name is the idempotency handler key.
+/// shutdown. Subclass this to bind a concrete source; the subclass name is the idempotency handler key. To
+/// run several consumers over distinct sources, register each source with
+/// <see cref="MessagingBuilder.AddKeyedMessageSource{TSource}"/> and annotate the subclass's base-constructor
+/// <paramref name="source"/> parameter with <c>[FromKeyedServices(sourceKey)]</c> to select it.
 /// </summary>
 /// <param name="source">The message source to drain.</param>
 /// <param name="scopes">The scope factory used to resolve scoped handlers per message.</param>
@@ -153,7 +157,12 @@ public abstract class MessageConsumerService(
                     // the transport drops it. Do NOT also nack-requeue; pairing dead-letter with a requeue would
                     // redeliver a poison message forever.
                     var sink = services.GetRequiredService<IDeadLetterSink>();
-                    await sink.SendAsync(message, ex, opts.Retry.MaxAttempts, ct).ConfigureAwait(false);
+
+                    // Report the attempts actually made, never the configured ceiling: the handler always
+                    // runs at least once (even with RetryOptions.MaxAttempts == 0), so the DLQ record must
+                    // never claim "0 attempt(s)".
+                    var attemptsMade = Math.Max(1, opts.Retry.MaxAttempts);
+                    await sink.SendAsync(message, ex, attemptsMade, ct).ConfigureAwait(false);
                     await source.AcknowledgeAsync(message, ct).ConfigureAwait(false);
                 }
             }
@@ -173,7 +182,10 @@ public abstract class MessageConsumerService(
         return new ResiliencePipelineBuilder()
             .AddRetry(new RetryStrategyOptions
             {
-                ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+                // Only retry plausibly-transient faults. Deterministic failures are classified as permanent
+                // by IsTransient and dead-lettered on the first pass instead of burning the whole backoff
+                // budget re-running a guaranteed-to-fail attempt.
+                ShouldHandle = new PredicateBuilder().Handle<Exception>(IsTransient),
                 MaxRetryAttempts = Math.Max(0, retry.MaxAttempts - 1),
                 DelayGenerator = args =>
                 {
@@ -184,6 +196,34 @@ public abstract class MessageConsumerService(
             })
             .Build();
     }
+
+    // Classifies a handler failure for the retry pipeline. Deterministic, self-identical failures are
+    // permanent — a retry re-runs the exact same computation over the exact same bytes and fails the same
+    // way — so they return false and drop straight through to the dead-letter path without consuming the
+    // backoff budget. Everything else is assumed transient (transport/broker/database hiccups, timeouts) and
+    // retried. OperationCanceledException never reaches here: cooperative cancellation is honored by the
+    // pipeline and filtered out of the dead-letter catch, so it is intentionally not classified.
+    private static bool IsTransient(Exception exception) => exception switch
+    {
+        // Malformed payload — re-deserializing the same bytes will always throw again.
+        JsonException => false,
+
+        // Payload failed validation — the same message will always be rejected. Fully qualified so this
+        // transport file does not pull the FluentValidation namespace in for a single classification arm.
+        FluentValidation.ValidationException => false,
+
+        // Bad/unsupported argument or capability: a contract/coding error, not a blip (also covers the
+        // ArgumentNullException subclass).
+        ArgumentException => false,
+        NotSupportedException => false,
+
+        // The dispatcher raises InvalidOperationException for an unregistered message type or a body that
+        // deserializes to null — both are structural poison messages, never fixed by retrying.
+        InvalidOperationException => false,
+
+        // Assume anything else (I/O, broker, database, timeout) may succeed on a later attempt.
+        _ => true,
+    };
 
     /// <summary>
     /// Spreads <paramref name="delayMs"/> by up to ±<see cref="JitterFraction"/> using a cryptographically

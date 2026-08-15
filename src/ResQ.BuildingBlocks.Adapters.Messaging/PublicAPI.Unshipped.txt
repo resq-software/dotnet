@@ -52,7 +52,8 @@ ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.MessageType.init -> void
 ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.OccurredOnUtc.get -> System.DateTimeOffset
 ResQ.BuildingBlocks.Adapters.Messaging.MessageEnvelope.OccurredOnUtc.init -> void
 ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder
-ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.AddConsumer<TSource>() -> ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!
+ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.AddKeyedMessageSource<TSource>(object! sourceKey) -> ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!
+ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.AddMessageSource<TSource>() -> ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!
 ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.UseDeadLetterSink<TSink>() -> ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!
 ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder.UseInMemory() -> ResQ.BuildingBlocks.Adapters.Messaging.MessagingBuilder!

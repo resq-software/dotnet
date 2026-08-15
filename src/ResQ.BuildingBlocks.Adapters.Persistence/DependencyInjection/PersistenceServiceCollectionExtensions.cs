@@ -50,6 +50,12 @@ public static class PersistenceServiceCollectionExtensions
 
         if (options.UseOutbox)
         {
+            services.AddOptions<OutboxOptions>()
+                .Validate(
+                    o => o.PollingInterval > TimeSpan.Zero && o.BatchSize >= 1 && o.MaxAttempts >= 1,
+                    "OutboxOptions: PollingInterval must be > 0, BatchSize >= 1, MaxAttempts >= 1")
+                .ValidateOnStart();
+
             services.AddScoped<IOutbox, EfOutbox>();
             services.AddHostedService<OutboxRelay>();
         }

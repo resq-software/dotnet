@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using ResQ.BuildingBlocks.Application;
 using ResQ.BuildingBlocks.Domain;
 
@@ -9,10 +10,10 @@ namespace ResQ.BuildingBlocks.Testing;
 /// </summary>
 public sealed class RecordingDomainEventDispatcher : IDomainEventDispatcher
 {
-    private readonly List<IDomainEvent> _dispatched = [];
+    private readonly ConcurrentQueue<IDomainEvent> _dispatched = new();
 
-    /// <summary>Gets the domain events captured so far, in dispatch order.</summary>
-    public IReadOnlyList<IDomainEvent> Dispatched => _dispatched;
+    /// <summary>Gets a snapshot of the domain events captured so far, in dispatch order.</summary>
+    public IReadOnlyList<IDomainEvent> Dispatched => _dispatched.ToArray();
 
     /// <summary>Captures the supplied domain events and completes.</summary>
     /// <param name="domainEvents">The domain events being dispatched.</param>
@@ -21,7 +22,11 @@ public sealed class RecordingDomainEventDispatcher : IDomainEventDispatcher
     public Task DispatchAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(domainEvents);
-        _dispatched.AddRange(domainEvents);
+        foreach (var domainEvent in domainEvents)
+        {
+            _dispatched.Enqueue(domainEvent);
+        }
+
         return Task.CompletedTask;
     }
 }
