@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
+using ResQ.BuildingBlocks.Domain;
 
 namespace ResQ.BuildingBlocks.Application;
 
@@ -19,13 +22,29 @@ public interface IPipelineBehavior<in TRequest, TResponse>
     Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken);
 }
 
-/// <summary>Runs all registered FluentValidation validators before the handler; throws on failure.</summary>
+/// <summary>
+/// Runs all registered FluentValidation validators before the handler. On failure it short-circuits the
+/// pipeline with a failed <see cref="Result"/> carrying a single <see cref="ErrorType.Validation"/> error
+/// (the per-field failures aggregated into its message) instead of throwing — consistent with the library's
+/// Result-over-exceptions idiom, where validation failures are an <em>expected</em> outcome rather than an
+/// exceptional one.
+/// </summary>
 /// <typeparam name="TRequest">The request type.</typeparam>
-/// <typeparam name="TResponse">The response type.</typeparam>
+/// <typeparam name="TResponse">The response type; always <see cref="Result"/> or <see cref="Result{TValue}"/>.</typeparam>
 public sealed class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
 {
-    /// <inheritdoc />
+    /// <summary>Stable code for the aggregated validation error.</summary>
+    private const string ValidationErrorCode = "validation.failed";
+
+    // Built once per closed (TRequest, TResponse): maps the aggregated Error to a failed TResponse with no
+    // per-invocation reflection. Null when TResponse is neither Result nor Result<T> (defensive; see Handle).
+    private static readonly Func<Error, TResponse>? FailureFactory = BuildFailureFactory();
+
+    /// <summary>
+    /// Runs the validators; on failure short-circuits with a failed <typeparamref name="TResponse"/> carrying
+    /// an <see cref="ErrorType.Validation"/> error, otherwise continues the pipeline via <paramref name="next"/>.
+    /// </summary>
     public async Task<TResponse> Handle(
         TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
@@ -47,11 +66,51 @@ public sealed class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidat
 
             if (failures.Count != 0)
             {
-                throw new ValidationException(failures);
+                // Defensive: TResponse is neither Result nor Result<T>, so there is no failed value to
+                // return — fall back to throwing so the failure is never silently dropped.
+                if (FailureFactory is null)
+                {
+                    throw new ValidationException(failures);
+                }
+
+                // Preserve per-field detail in the message; per-field RFC7807 rendering stays in the Web adapter.
+                var message = string.Join(
+                    "; ", failures.Select(failure => $"{failure.PropertyName}: {failure.ErrorMessage}"));
+                return FailureFactory(Error.Validation(ValidationErrorCode, message));
             }
         }
 
         return await next().ConfigureAwait(false);
+    }
+
+    // Reflection is confined here and cached in FailureFactory. TResponse is already a closed type, so the
+    // failed-Result factory is built against it directly (no MakeGenericType). Annotated to match the other
+    // reflection seams in this assembly (Sender, DomainEventDispatcher).
+    [RequiresUnreferencedCode(
+        "Builds a failed Result<TValue> for TResponse via reflection over the Result.Failure<T>(Error) factory.")]
+    [RequiresDynamicCode("Closes the generic Result.Failure<T>(Error) factory for TValue via MakeGenericMethod.")]
+    private static Func<Error, TResponse>? BuildFailureFactory()
+    {
+        if (typeof(TResponse) == typeof(Result))
+        {
+            return static error => (TResponse)(object)Result.Failure(error);
+        }
+
+        if (typeof(TResponse).IsGenericType &&
+            typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<>))
+        {
+            var valueType = typeof(TResponse).GetGenericArguments()[0];
+            var failure = typeof(Result)
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .Single(method =>
+                    string.Equals(method.Name, nameof(Result.Failure), StringComparison.Ordinal) &&
+                    method.IsGenericMethodDefinition)
+                .MakeGenericMethod(valueType);
+
+            return error => (TResponse)failure.Invoke(null, [error])!;
+        }
+
+        return null;
     }
 }
 
