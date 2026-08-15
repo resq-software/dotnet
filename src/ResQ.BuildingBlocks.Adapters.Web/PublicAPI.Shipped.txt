@@ -1,1 +1,100 @@
 #nullable enable
+ResQ.BuildingBlocks.Adapters.Web.ApiVersioningExtensions
+ResQ.BuildingBlocks.Adapters.Web.CorrelationMiddleware
+ResQ.BuildingBlocks.Adapters.Web.CorrelationMiddleware.CorrelationMiddleware(Microsoft.Extensions.Options.IOptions<ResQ.BuildingBlocks.Adapters.Web.CorrelationOptions!>! options) -> void
+ResQ.BuildingBlocks.Adapters.Web.CorrelationMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext! context, Microsoft.AspNetCore.Http.RequestDelegate! next) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Adapters.Web.CorrelationOptions
+ResQ.BuildingBlocks.Adapters.Web.CorrelationOptions.CorrelationOptions() -> void
+ResQ.BuildingBlocks.Adapters.Web.CorrelationOptions.HeaderName.get -> string!
+ResQ.BuildingBlocks.Adapters.Web.CorrelationOptions.HeaderName.set -> void
+ResQ.BuildingBlocks.Adapters.Web.CorsExtensions
+ResQ.BuildingBlocks.Adapters.Web.CursorCodec
+ResQ.BuildingBlocks.Adapters.Web.CursorRequest
+ResQ.BuildingBlocks.Adapters.Web.CursorRequest.<Clone>$() -> ResQ.BuildingBlocks.Adapters.Web.CursorRequest!
+ResQ.BuildingBlocks.Adapters.Web.CursorRequest.Cursor.get -> string?
+ResQ.BuildingBlocks.Adapters.Web.CursorRequest.Cursor.init -> void
+ResQ.BuildingBlocks.Adapters.Web.CursorRequest.CursorRequest() -> void
+ResQ.BuildingBlocks.Adapters.Web.CursorRequest.Equals(ResQ.BuildingBlocks.Adapters.Web.CursorRequest? other) -> bool
+ResQ.BuildingBlocks.Adapters.Web.CursorRequest.PageSize.get -> int
+ResQ.BuildingBlocks.Adapters.Web.CursorRequest.PageSize.init -> void
+ResQ.BuildingBlocks.Adapters.Web.EndpointExtensions
+ResQ.BuildingBlocks.Adapters.Web.IEndpoint
+ResQ.BuildingBlocks.Adapters.Web.IEndpoint.MapEndpoint(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! app) -> void
+ResQ.BuildingBlocks.Adapters.Web.OpenApiExtensions
+ResQ.BuildingBlocks.Adapters.Web.PageRequest
+ResQ.BuildingBlocks.Adapters.Web.PageRequest.<Clone>$() -> ResQ.BuildingBlocks.Adapters.Web.PageRequest!
+ResQ.BuildingBlocks.Adapters.Web.PageRequest.Equals(ResQ.BuildingBlocks.Adapters.Web.PageRequest? other) -> bool
+ResQ.BuildingBlocks.Adapters.Web.PageRequest.Normalize(ResQ.BuildingBlocks.Adapters.Web.PaginationOptions! options) -> ResQ.BuildingBlocks.Adapters.Web.PageRequest!
+ResQ.BuildingBlocks.Adapters.Web.PageRequest.Page.get -> int
+ResQ.BuildingBlocks.Adapters.Web.PageRequest.Page.init -> void
+ResQ.BuildingBlocks.Adapters.Web.PageRequest.PageRequest() -> void
+ResQ.BuildingBlocks.Adapters.Web.PageRequest.PageSize.get -> int
+ResQ.BuildingBlocks.Adapters.Web.PageRequest.PageSize.init -> void
+ResQ.BuildingBlocks.Adapters.Web.PaginationOptions
+ResQ.BuildingBlocks.Adapters.Web.PaginationOptions.DefaultPageSize.get -> int
+ResQ.BuildingBlocks.Adapters.Web.PaginationOptions.DefaultPageSize.set -> void
+ResQ.BuildingBlocks.Adapters.Web.PaginationOptions.MaxPageSize.get -> int
+ResQ.BuildingBlocks.Adapters.Web.PaginationOptions.MaxPageSize.set -> void
+ResQ.BuildingBlocks.Adapters.Web.PaginationOptions.PaginationOptions() -> void
+ResQ.BuildingBlocks.Adapters.Web.ProblemDetailsConfigurator
+ResQ.BuildingBlocks.Adapters.Web.ProblemDetailsExceptionHandler
+ResQ.BuildingBlocks.Adapters.Web.ProblemDetailsExceptionHandler.ProblemDetailsExceptionHandler(Microsoft.AspNetCore.Http.IProblemDetailsService! problemDetails, Microsoft.Extensions.Logging.ILogger<ResQ.BuildingBlocks.Adapters.Web.ProblemDetailsExceptionHandler!>! logger) -> void
+ResQ.BuildingBlocks.Adapters.Web.ProblemDetailsExceptionHandler.TryHandleAsync(Microsoft.AspNetCore.Http.HttpContext! httpContext, System.Exception! exception, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<bool>
+ResQ.BuildingBlocks.Adapters.Web.ProblemDetailsMapper
+ResQ.BuildingBlocks.Adapters.Web.ResqCorsOptions
+ResQ.BuildingBlocks.Adapters.Web.ResqCorsOptions.AllowCredentials.get -> bool
+ResQ.BuildingBlocks.Adapters.Web.ResqCorsOptions.AllowCredentials.set -> void
+ResQ.BuildingBlocks.Adapters.Web.ResqCorsOptions.AllowedOrigins.get -> string![]!
+ResQ.BuildingBlocks.Adapters.Web.ResqCorsOptions.AllowedOrigins.set -> void
+ResQ.BuildingBlocks.Adapters.Web.ResqCorsOptions.PolicyName.get -> string!
+ResQ.BuildingBlocks.Adapters.Web.ResqCorsOptions.PolicyName.set -> void
+ResQ.BuildingBlocks.Adapters.Web.ResqCorsOptions.ResqCorsOptions() -> void
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.Correlation.get -> ResQ.BuildingBlocks.Adapters.Web.CorrelationOptions!
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.Correlation.set -> void
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.DocsBaseUri.get -> string?
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.DocsBaseUri.set -> void
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.EnableOpenApiUi.get -> bool
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.EnableOpenApiUi.set -> void
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.Pagination.get -> ResQ.BuildingBlocks.Adapters.Web.PaginationOptions!
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.Pagination.set -> void
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.ResqWebOptions() -> void
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.StatusOverrides.get -> System.Collections.Generic.IReadOnlyDictionary<ResQ.BuildingBlocks.Domain.ErrorType, int>?
+ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions.StatusOverrides.set -> void
+ResQ.BuildingBlocks.Adapters.Web.ResultExtensions
+ResQ.BuildingBlocks.Adapters.Web.ValidationEndpointFilter<TRequest>
+ResQ.BuildingBlocks.Adapters.Web.ValidationEndpointFilter<TRequest>.InvokeAsync(Microsoft.AspNetCore.Http.EndpointFilterInvocationContext! context, Microsoft.AspNetCore.Http.EndpointFilterDelegate! next) -> System.Threading.Tasks.ValueTask<object?>
+ResQ.BuildingBlocks.Adapters.Web.ValidationEndpointFilter<TRequest>.ValidationEndpointFilter(System.Collections.Generic.IEnumerable<FluentValidation.IValidator<TRequest>!>! validators) -> void
+ResQ.BuildingBlocks.Adapters.Web.ValidationFilterExtensions
+ResQ.BuildingBlocks.Adapters.Web.WebServiceCollectionExtensions
+override ResQ.BuildingBlocks.Adapters.Web.CursorRequest.Equals(object? obj) -> bool
+override ResQ.BuildingBlocks.Adapters.Web.CursorRequest.GetHashCode() -> int
+override ResQ.BuildingBlocks.Adapters.Web.CursorRequest.ToString() -> string!
+override ResQ.BuildingBlocks.Adapters.Web.PageRequest.Equals(object? obj) -> bool
+override ResQ.BuildingBlocks.Adapters.Web.PageRequest.GetHashCode() -> int
+override ResQ.BuildingBlocks.Adapters.Web.PageRequest.ToString() -> string!
+static ResQ.BuildingBlocks.Adapters.Web.ApiVersioningExtensions.AddResqApiVersioning(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Asp.Versioning.ApiVersioningOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static ResQ.BuildingBlocks.Adapters.Web.ApiVersioningExtensions.CreateResqVersionSet(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! app, params double[]! versions) -> Asp.Versioning.Builder.ApiVersionSet!
+static ResQ.BuildingBlocks.Adapters.Web.ApiVersioningExtensions.MapVersionedGroup(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! app, string! prefix, Asp.Versioning.Builder.ApiVersionSet! set) -> Microsoft.AspNetCore.Routing.RouteGroupBuilder!
+static ResQ.BuildingBlocks.Adapters.Web.CorsExtensions.AddResqCors(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static ResQ.BuildingBlocks.Adapters.Web.CursorCodec.Decode(string? cursor) -> string?
+static ResQ.BuildingBlocks.Adapters.Web.CursorCodec.Encode(string! rawKey) -> string!
+static ResQ.BuildingBlocks.Adapters.Web.CursorRequest.operator !=(ResQ.BuildingBlocks.Adapters.Web.CursorRequest? left, ResQ.BuildingBlocks.Adapters.Web.CursorRequest? right) -> bool
+static ResQ.BuildingBlocks.Adapters.Web.CursorRequest.operator ==(ResQ.BuildingBlocks.Adapters.Web.CursorRequest? left, ResQ.BuildingBlocks.Adapters.Web.CursorRequest? right) -> bool
+static ResQ.BuildingBlocks.Adapters.Web.EndpointExtensions.AddResqEndpoints(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, params System.Reflection.Assembly![]! assemblies) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static ResQ.BuildingBlocks.Adapters.Web.EndpointExtensions.MapResqEndpoints(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! app) -> Microsoft.AspNetCore.Routing.IEndpointRouteBuilder!
+static ResQ.BuildingBlocks.Adapters.Web.OpenApiExtensions.AddResqOpenApi(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! documentName = "v1") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static ResQ.BuildingBlocks.Adapters.Web.OpenApiExtensions.MapResqOpenApi(this Microsoft.AspNetCore.Builder.WebApplication! app, bool enableUi = true) -> Microsoft.AspNetCore.Builder.WebApplication!
+static ResQ.BuildingBlocks.Adapters.Web.PageRequest.operator !=(ResQ.BuildingBlocks.Adapters.Web.PageRequest? left, ResQ.BuildingBlocks.Adapters.Web.PageRequest? right) -> bool
+static ResQ.BuildingBlocks.Adapters.Web.PageRequest.operator ==(ResQ.BuildingBlocks.Adapters.Web.PageRequest? left, ResQ.BuildingBlocks.Adapters.Web.PageRequest? right) -> bool
+static ResQ.BuildingBlocks.Adapters.Web.ProblemDetailsConfigurator.Customize.get -> System.Action<Microsoft.AspNetCore.Http.ProblemDetailsContext!>!
+static ResQ.BuildingBlocks.Adapters.Web.ProblemDetailsMapper.ToProblemDetails(ResQ.BuildingBlocks.Domain.Error! error, Microsoft.AspNetCore.Http.HttpContext? context = null, System.Collections.Generic.IReadOnlyDictionary<ResQ.BuildingBlocks.Domain.ErrorType, int>? overrides = null, string? docsBaseUri = null) -> Microsoft.AspNetCore.Mvc.ProblemDetails!
+static ResQ.BuildingBlocks.Adapters.Web.ProblemDetailsMapper.ToStatusCode(ResQ.BuildingBlocks.Domain.ErrorType type, System.Collections.Generic.IReadOnlyDictionary<ResQ.BuildingBlocks.Domain.ErrorType, int>? overrides = null) -> int
+static ResQ.BuildingBlocks.Adapters.Web.ResultExtensions.Match<T>(this ResQ.BuildingBlocks.Domain.Result<T>! result, System.Func<T, Microsoft.AspNetCore.Http.IResult!>! onSuccess, System.Func<ResQ.BuildingBlocks.Domain.Error!, Microsoft.AspNetCore.Http.IResult!>? onFailure = null) -> Microsoft.AspNetCore.Http.IResult!
+static ResQ.BuildingBlocks.Adapters.Web.ResultExtensions.Problem(this ResQ.BuildingBlocks.Domain.Error! error, Microsoft.AspNetCore.Http.HttpContext? context = null) -> Microsoft.AspNetCore.Http.IResult!
+static ResQ.BuildingBlocks.Adapters.Web.ResultExtensions.ToHttpResult(this ResQ.BuildingBlocks.Domain.Result! result, int successStatus = 204) -> Microsoft.AspNetCore.Http.IResult!
+static ResQ.BuildingBlocks.Adapters.Web.ResultExtensions.ToHttpResult<T>(this ResQ.BuildingBlocks.Domain.Result<T>! result, System.Func<T, Microsoft.AspNetCore.Http.IResult!>? onSuccess = null) -> Microsoft.AspNetCore.Http.IResult!
+static ResQ.BuildingBlocks.Adapters.Web.ValidationFilterExtensions.WithValidation<TRequest>(this Microsoft.AspNetCore.Builder.RouteHandlerBuilder! builder) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+static ResQ.BuildingBlocks.Adapters.Web.ValidationFilterExtensions.WithValidation<TRequest>(this Microsoft.AspNetCore.Routing.RouteGroupBuilder! builder) -> Microsoft.AspNetCore.Routing.RouteGroupBuilder!
+static ResQ.BuildingBlocks.Adapters.Web.WebServiceCollectionExtensions.AddResqWeb(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<ResQ.BuildingBlocks.Adapters.Web.ResqWebOptions!>? configure = null, params System.Reflection.Assembly![]! endpointAssemblies) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static ResQ.BuildingBlocks.Adapters.Web.WebServiceCollectionExtensions.UseResqWeb(this Microsoft.AspNetCore.Builder.WebApplication! app) -> Microsoft.AspNetCore.Builder.WebApplication!
