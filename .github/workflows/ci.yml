@@ -148,6 +148,9 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     environment: nuget
+    permissions:
+      contents: read
+      id-token: write # OIDC token for NuGet trusted publishing (no long-lived API key)
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -157,9 +160,17 @@ jobs:
         with:
           global-json-file: global.json
       - run: dotnet pack -c Release -o artifacts
+      # Exchange the GitHub OIDC token for a short-lived NuGet API key via trusted
+      # publishing. Requires a matching policy on nuget.org (repo resq-software/dotnet,
+      # workflow ci.yml, environment nuget) and the NUGET_USER repo variable.
+      - name: Authenticate to NuGet via OIDC trusted publishing
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        id: nuget-login
+        with:
+          user: ${{ vars.NUGET_USER }}
       - name: Push
         run: >
           dotnet nuget push "artifacts/*.nupkg"
-          --api-key "${{ secrets.NUGET_API_KEY }}"
+          --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}"
           --source https://api.nuget.org/v3/index.json
           --skip-duplicate
