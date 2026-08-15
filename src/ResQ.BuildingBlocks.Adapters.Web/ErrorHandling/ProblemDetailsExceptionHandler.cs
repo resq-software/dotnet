@@ -47,7 +47,11 @@ public sealed class ProblemDetailsExceptionHandler(
             }).ConfigureAwait(false);
         }
 
-        logger.LogError(exception, "Unhandled exception processing {Path} (traceId: {TraceId}).", httpContext.Request.Path, traceId);
+        // Strip CR/LF from the user-controllable request path before logging (prevents log forging).
+        var safePath = httpContext.Request.Path.HasValue
+            ? httpContext.Request.Path.Value!.Replace('\r', '_').Replace('\n', '_')
+            : "/";
+        logger.LogError(exception, "Unhandled exception processing {Path} (traceId: {TraceId}).", safePath, traceId);
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
         return await problemDetails.TryWriteAsync(new ProblemDetailsContext
