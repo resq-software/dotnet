@@ -15,8 +15,11 @@ public enum ErrorType
     /// <summary>The operation conflicts with current state (e.g. a uniqueness violation).</summary>
     Conflict = 3,
 
-    /// <summary>The caller is not permitted to perform the operation.</summary>
+    /// <summary>The caller is not authenticated (maps to HTTP 401).</summary>
     Unauthorized = 4,
+
+    /// <summary>The caller is authenticated but not permitted to perform the operation (maps to HTTP 403).</summary>
+    Forbidden = 5,
 }
 
 /// <summary>A domain error: a stable <paramref name="Code"/>, a human message, and a <paramref name="Type"/>.</summary>
@@ -36,6 +39,12 @@ public sealed record Error(string Code, string Message, ErrorType Type = ErrorTy
 
     /// <summary>Creates a <see cref="ErrorType.Conflict"/> error.</summary>
     public static Error Conflict(string code, string message) => new(code, message, ErrorType.Conflict);
+
+    /// <summary>Creates an <see cref="ErrorType.Unauthorized"/> error (unauthenticated; HTTP 401).</summary>
+    public static Error Unauthorized(string code, string message) => new(code, message, ErrorType.Unauthorized);
+
+    /// <summary>Creates a <see cref="ErrorType.Forbidden"/> error (authenticated but not permitted; HTTP 403).</summary>
+    public static Error Forbidden(string code, string message) => new(code, message, ErrorType.Forbidden);
 }
 
 /// <summary>The outcome of an operation: success, or failure carrying an <see cref="Error"/>.</summary>
