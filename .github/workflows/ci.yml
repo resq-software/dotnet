@@ -176,8 +176,10 @@ jobs:
         run: |
           if [ -n "$VERSION_OVERRIDE" ]; then
             dotnet pack -c Release -o artifacts -p:MinVerVersionOverride="$VERSION_OVERRIDE"
+            dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o artifacts -p:MinVerVersionOverride="$VERSION_OVERRIDE"
           else
             dotnet pack -c Release -o artifacts
+            dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o artifacts
           fi
       # Exchange the GitHub OIDC token for a short-lived NuGet API key via trusted
       # publishing. Requires a matching policy on nuget.org (repo resq-software/dotnet,
