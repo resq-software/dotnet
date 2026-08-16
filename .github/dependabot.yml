@@ -1,0 +1,104 @@
+# Copyright 2026 ResQ Software
+# SPDX-License-Identifier: Apache-2.0
+#
+# Automated dependency updates. Every version in this repo is pinned by
+# hand — 47 NuGet packages under Central Package Management, 11 actions
+# pinned to commit SHAs — so without this file nothing ever moves, and
+# security patches land only when someone notices. The System.Text.Json
+# transitive pin in Directory.Packages.props (CVE-2024-43485) is what a
+# manual catch looks like; this automates the next one.
+
+version: 2
+
+updates:
+  # ---- NuGet: root solution (Central Package Management) --------------
+  # ManagePackageVersionsCentrally means every version lives in
+  # Directory.Packages.props, so updates land as edits to that one file.
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:17"
+    open-pull-requests-limit: 5
+    labels:
+      - chore
+      - deps
+    groups:
+      # Microsoft.Extensions.*, EF Core, and AspNetCore ship as one
+      # versioned wave; splitting them produces PRs that fail to restore
+      # against each other.
+      microsoft:
+        patterns:
+          - "Microsoft.*"
+          - "System.Text.Json"
+      opentelemetry:
+        patterns:
+          - "OpenTelemetry.*"
+      testing:
+        patterns:
+          - "xunit*"
+          - "NSubstitute"
+          - "FluentAssertions"
+          - "Testcontainers*"
+          - "NetArchTest*"
+          - "coverlet*"
+      analyzers:
+        patterns:
+          - "Meziantou.Analyzer"
+          - "Microsoft.CodeAnalysis.*Analyzers"
+
+  # ---- NuGet: dotnet new template content ----------------------------
+  # templates/resq-service/ has its own Directory.Packages.props and is
+  # scaffolded/restored outside the root tree (see NuGet.config), so it
+  # needs its own entry — the root scan does not reach it. Kept separate
+  # so template bumps are reviewed on their own: they change what
+  # downstream services are scaffolded with.
+  - package-ecosystem: nuget
+    directory: /templates/resq-service
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:17"
+    open-pull-requests-limit: 3
+    labels:
+      - chore
+      - deps
+    groups:
+      # The template references this repo's own published packages. They
+      # version together off one MinVer tag, so without grouping every
+      # release opens eight near-identical PRs against the template.
+      resq-buildingblocks:
+        patterns:
+          - "ResQ.BuildingBlocks.*"
+      template-deps:
+        patterns:
+          - "Microsoft.*"
+          - "OpenTelemetry.*"
+          - "xunit*"
+          - "Testcontainers*"
+          - "NetArchTest*"
+          - "coverlet*"
+
+  # ---- GitHub Actions -------------------------------------------------
+  # All 11 actions are SHA-pinned. Dependabot updates SHA pins in place
+  # and rewrites the trailing `# vX.Y.Z` comment, so pins stay pins.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:17"
+    open-pull-requests-limit: 5
+    labels:
+      - chore
+      - deps
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    ignore:
+      # Version-locked to the gh-aw compiler and rewritten by
+      # `gh aw compile` into the *.lock.yml files; a Dependabot bump here
+      # is reverted on the next compile.
+      - dependency-name: "github/gh-aw-actions*"
