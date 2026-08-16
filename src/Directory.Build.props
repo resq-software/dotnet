@@ -17,6 +17,11 @@
 
     <!-- Catch accidental public-API / TFM-compat breaks at pack time (baseline deferred to post-1.0). -->
     <EnablePackageValidation>true</EnablePackageValidation>
+
+    <!-- MinVer derives the version from git tags. Our release tags are v-prefixed (e.g. v0.2.0), and
+         MinVer's default expects an unprefixed tag, so without this it ignores them and falls back to
+         0.0.0-alpha.<height>. Strip the leading "v" so v0.2.0 -> 0.2.0. -->
+    <MinVerTagPrefix>v</MinVerTagPrefix>
   </PropertyGroup>
 
   <!-- Shared build-time dependencies applied to every library (versions in Directory.Packages.props). -->
