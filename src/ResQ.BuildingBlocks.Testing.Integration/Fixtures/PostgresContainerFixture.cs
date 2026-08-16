@@ -14,8 +14,7 @@ namespace ResQ.BuildingBlocks.Testing.Integration;
 /// </remarks>
 public class PostgresContainerFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
-        .WithImage("postgres:16-alpine")
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgres:16-alpine")
         .Build();
 
     /// <summary>Gets the underlying Testcontainers PostgreSQL container.</summary>
