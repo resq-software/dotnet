@@ -32,7 +32,7 @@
 
     <!-- Web adapter (net9-only project) -->
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
-    <PackageVersion Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageVersion Include="Asp.Versioning.Http" Version="8.1.1" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.0.5" />
 
     <!-- ServiceDefaults (cross-cutting: OpenTelemetry / resilience / discovery) -->
@@ -67,7 +67,7 @@
          so they run against the building blocks but never flow to consumers, tests, or samples). -->
     <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
-    <PackageVersion Include="Meziantou.Analyzer" Version="3.0.154" />
+    <PackageVersion Include="Meziantou.Analyzer" Version="3.0.157" />
   </ItemGroup>
 
 </Project>
