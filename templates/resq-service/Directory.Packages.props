@@ -22,7 +22,7 @@
     <PackageVersion Include="ResQ.BuildingBlocks.Testing.Integration" Version="0.2.0" />
 
     <!-- Application layer -->
-    <PackageVersion Include="FluentValidation" Version="11.11.0" />
+    <PackageVersion Include="FluentValidation" Version="12.1.1" />
 
     <!--
       EF Core provider(s). Pinned to the coherent 9.0.0 stack that the building blocks target — note
