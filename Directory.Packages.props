@@ -14,13 +14,13 @@
     <!-- Application layer -->
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.19" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.19" />
     <PackageVersion Include="Scrutor" Version="5.0.1" />
 
     <!-- Messaging adapter (broker-agnostic core) -->
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.19" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.19" />
     <PackageVersion Include="Polly.Core" Version="8.5.0" />
     <!-- Transitive security pin: force System.Text.Json off the vulnerable <=8.0.4 line
          (CVE-2024-43485 / GHSA-8g4q-xg66-9fp4). Upgrade on both TFMs, so no CPM downgrade. -->
@@ -42,7 +42,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.17.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.17.0" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.2" />
 
     <!-- Testing (core) -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
