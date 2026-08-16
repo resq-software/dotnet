@@ -29,7 +29,7 @@
       this is Npgsql 9.0.0 (NOT 9.0.4, which would require EF Core >= 9.0.1 and downgrade the 9.0.0 pins,
       NU1109). Keeping the whole graph on 9.0.0 means no VersionOverride is ever needed downstream.
     -->
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
     <PackageVersion Include="EFCore.NamingConventions" Version="9.0.0" />
 
