@@ -1,1 +1,43 @@
 #nullable enable
+ResQ.BuildingBlocks.Testing.Builder<T>
+ResQ.BuildingBlocks.Testing.Builder<T>.Builder() -> void
+ResQ.BuildingBlocks.Testing.CapturingLoggerProvider
+ResQ.BuildingBlocks.Testing.CapturingLoggerProvider.CapturingLoggerProvider() -> void
+ResQ.BuildingBlocks.Testing.CapturingLoggerProvider.CreateLogger(string! categoryName) -> Microsoft.Extensions.Logging.ILogger!
+ResQ.BuildingBlocks.Testing.CapturingLoggerProvider.Dispose() -> void
+ResQ.BuildingBlocks.Testing.CapturingLoggerProvider.Entries.get -> System.Collections.Generic.IReadOnlyList<string!>!
+ResQ.BuildingBlocks.Testing.FakeClock
+ResQ.BuildingBlocks.Testing.FakeClock.Advance(System.TimeSpan by) -> void
+ResQ.BuildingBlocks.Testing.FakeClock.FakeClock(System.DateTimeOffset? start = null) -> void
+ResQ.BuildingBlocks.Testing.FakeClock.Set(System.DateTimeOffset utc) -> void
+ResQ.BuildingBlocks.Testing.FakeClock.UtcNow.get -> System.DateTimeOffset
+ResQ.BuildingBlocks.Testing.FakeUnitOfWork
+ResQ.BuildingBlocks.Testing.FakeUnitOfWork.AffectedRows.get -> int
+ResQ.BuildingBlocks.Testing.FakeUnitOfWork.AffectedRows.set -> void
+ResQ.BuildingBlocks.Testing.FakeUnitOfWork.FakeUnitOfWork() -> void
+ResQ.BuildingBlocks.Testing.FakeUnitOfWork.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
+ResQ.BuildingBlocks.Testing.FakeUnitOfWork.SaveChangesCallCount.get -> int
+ResQ.BuildingBlocks.Testing.HexagonRules
+ResQ.BuildingBlocks.Testing.NoopUnitOfWork
+ResQ.BuildingBlocks.Testing.NoopUnitOfWork.NoopUnitOfWork() -> void
+ResQ.BuildingBlocks.Testing.NoopUnitOfWork.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
+ResQ.BuildingBlocks.Testing.RecordingDomainEventDispatcher
+ResQ.BuildingBlocks.Testing.RecordingDomainEventDispatcher.DispatchAsync(System.Collections.Generic.IEnumerable<ResQ.BuildingBlocks.Domain.IDomainEvent!>! domainEvents, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Testing.RecordingDomainEventDispatcher.Dispatched.get -> System.Collections.Generic.IReadOnlyList<ResQ.BuildingBlocks.Domain.IDomainEvent!>!
+ResQ.BuildingBlocks.Testing.RecordingDomainEventDispatcher.RecordingDomainEventDispatcher() -> void
+ResQ.BuildingBlocks.Testing.RecordingIntegrationEventPublisher
+ResQ.BuildingBlocks.Testing.RecordingIntegrationEventPublisher.PublishAsync(ResQ.BuildingBlocks.Application.IntegrationEvent! event, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Testing.RecordingIntegrationEventPublisher.Published.get -> System.Collections.Generic.IReadOnlyList<ResQ.BuildingBlocks.Application.IntegrationEvent!>!
+ResQ.BuildingBlocks.Testing.RecordingIntegrationEventPublisher.RecordingIntegrationEventPublisher() -> void
+ResQ.BuildingBlocks.Testing.TestDoublesExtensions
+ResQ.BuildingBlocks.Testing.ThrowingUnitOfWork
+ResQ.BuildingBlocks.Testing.ThrowingUnitOfWork.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
+ResQ.BuildingBlocks.Testing.ThrowingUnitOfWork.ThrowingUnitOfWork(System.Exception? exception = null) -> void
+ResQ.BuildingBlocks.Testing.XUnitLoggerProvider
+ResQ.BuildingBlocks.Testing.XUnitLoggerProvider.CreateLogger(string! categoryName) -> Microsoft.Extensions.Logging.ILogger!
+ResQ.BuildingBlocks.Testing.XUnitLoggerProvider.Dispose() -> void
+ResQ.BuildingBlocks.Testing.XUnitLoggerProvider.XUnitLoggerProvider(Xunit.Abstractions.ITestOutputHelper! output) -> void
+abstract ResQ.BuildingBlocks.Testing.Builder<T>.Build() -> T
+static ResQ.BuildingBlocks.Testing.Builder<T>.implicit operator T(ResQ.BuildingBlocks.Testing.Builder<T>! builder) -> T
+static ResQ.BuildingBlocks.Testing.HexagonRules.DependencyRule.get -> System.Collections.Generic.IReadOnlyList<(string! Inner, string![]! MayNotBeReferencedBy)>!
+static ResQ.BuildingBlocks.Testing.TestDoublesExtensions.AddTestDoubles(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

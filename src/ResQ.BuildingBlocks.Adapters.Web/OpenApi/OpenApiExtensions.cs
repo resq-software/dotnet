@@ -42,8 +42,9 @@ public static class OpenApiExtensions
     }
 
     /// <summary>
-    /// Maps the OpenAPI JSON endpoint and, when <paramref name="enableUi"/> is set and the host is in
-    /// Development, the Scalar API reference UI.
+    /// Maps the OpenAPI JSON endpoint in Development and, when <paramref name="enableUi"/> is also set,
+    /// the Scalar API reference UI. Neither endpoint is exposed in Production so the API surface is not
+    /// served unauthenticated.
     /// </summary>
     /// <param name="app">The web application.</param>
     /// <param name="enableUi">Whether to map the Scalar UI in Development.</param>
@@ -52,7 +53,10 @@ public static class OpenApiExtensions
     {
         ArgumentNullException.ThrowIfNull(app);
 
-        app.MapOpenApi();
+        if (app.Environment.IsDevelopment())
+        {
+            app.MapOpenApi();
+        }
 
         if (enableUi && app.Environment.IsDevelopment())
         {

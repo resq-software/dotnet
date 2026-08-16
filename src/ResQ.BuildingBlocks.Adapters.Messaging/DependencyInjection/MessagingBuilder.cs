@@ -40,12 +40,39 @@ public sealed class MessagingBuilder
     }
 
     /// <summary>Adds <typeparamref name="TSource"/> as an inbound message source for consumers to drain.</summary>
+    /// <remarks>
+    /// Registers the source under the default (unkeyed) <see cref="IMessageSource"/>, which a single
+    /// <see cref="MessageConsumerService"/> subclass resolves automatically. For a multi-source setup —
+    /// several consumers each draining a distinct source — register each source with
+    /// <see cref="AddKeyedMessageSource{TSource}"/> instead and have every consumer subclass select its
+    /// source with <c>[FromKeyedServices(sourceKey)]</c> on the base-constructor <c>source</c> parameter.
+    /// </remarks>
     /// <typeparam name="TSource">The message-source implementation.</typeparam>
     /// <returns>The same builder for chaining.</returns>
-    public MessagingBuilder AddConsumer<TSource>()
+    public MessagingBuilder AddMessageSource<TSource>()
         where TSource : class, IMessageSource
     {
         Services.AddSingleton<IMessageSource, TSource>();
+        return this;
+    }
+
+    /// <summary>
+    /// Adds <typeparamref name="TSource"/> as a <i>keyed</i> inbound message source, so distinct consumers
+    /// can each drain a distinct source in a multi-source setup.
+    /// </summary>
+    /// <remarks>
+    /// A <see cref="MessageConsumerService"/> subclass selects this source by annotating its base-constructor
+    /// <c>source</c> parameter with <c>[FromKeyedServices(sourceKey)]</c> using the same
+    /// <paramref name="sourceKey"/>.
+    /// </remarks>
+    /// <typeparam name="TSource">The message-source implementation.</typeparam>
+    /// <param name="sourceKey">The DI service key a consumer subclass uses to select this source.</param>
+    /// <returns>The same builder for chaining.</returns>
+    public MessagingBuilder AddKeyedMessageSource<TSource>(object sourceKey)
+        where TSource : class, IMessageSource
+    {
+        ArgumentNullException.ThrowIfNull(sourceKey);
+        Services.AddKeyedSingleton<IMessageSource, TSource>(sourceKey);
         return this;
     }
 

@@ -12,14 +12,14 @@
 
   <ItemGroup>
     <!-- ResQ building blocks (the frame). Bump these together as new versions publish. -->
-    <PackageVersion Include="ResQ.BuildingBlocks.Domain" Version="0.1.0" />
-    <PackageVersion Include="ResQ.BuildingBlocks.Application" Version="0.1.0" />
-    <PackageVersion Include="ResQ.BuildingBlocks.Adapters.Web" Version="0.1.0" />
-    <PackageVersion Include="ResQ.BuildingBlocks.Adapters.Persistence" Version="0.1.0" />
-    <PackageVersion Include="ResQ.BuildingBlocks.Adapters.Messaging" Version="0.1.0" />
-    <PackageVersion Include="ResQ.BuildingBlocks.ServiceDefaults" Version="0.1.0" />
-    <PackageVersion Include="ResQ.BuildingBlocks.Testing" Version="0.1.0" />
-    <PackageVersion Include="ResQ.BuildingBlocks.Testing.Integration" Version="0.1.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Domain" Version="0.2.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Application" Version="0.2.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Adapters.Web" Version="0.2.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Adapters.Persistence" Version="0.2.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Adapters.Messaging" Version="0.2.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.ServiceDefaults" Version="0.2.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Testing" Version="0.2.0" />
+    <PackageVersion Include="ResQ.BuildingBlocks.Testing.Integration" Version="0.2.0" />
 
     <!-- Application layer -->
     <PackageVersion Include="FluentValidation" Version="11.11.0" />

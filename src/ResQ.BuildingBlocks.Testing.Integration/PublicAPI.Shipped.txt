@@ -1,1 +1,13 @@
 #nullable enable
+ResQ.BuildingBlocks.Testing.Integration.DatabaseCollection
+ResQ.BuildingBlocks.Testing.Integration.DatabaseCollection.DatabaseCollection() -> void
+ResQ.BuildingBlocks.Testing.Integration.PostgresContainerFixture
+ResQ.BuildingBlocks.Testing.Integration.PostgresContainerFixture.ConnectionString.get -> string!
+ResQ.BuildingBlocks.Testing.Integration.PostgresContainerFixture.Container.get -> Testcontainers.PostgreSql.PostgreSqlContainer!
+ResQ.BuildingBlocks.Testing.Integration.PostgresContainerFixture.DisposeAsync() -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Testing.Integration.PostgresContainerFixture.InitializeAsync() -> System.Threading.Tasks.Task!
+ResQ.BuildingBlocks.Testing.Integration.PostgresContainerFixture.PostgresContainerFixture() -> void
+ResQ.BuildingBlocks.Testing.Integration.ResqWebApplicationFactory<TEntryPoint>
+ResQ.BuildingBlocks.Testing.Integration.ResqWebApplicationFactory<TEntryPoint>.ResqWebApplicationFactory() -> void
+override ResQ.BuildingBlocks.Testing.Integration.ResqWebApplicationFactory<TEntryPoint>.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+virtual ResQ.BuildingBlocks.Testing.Integration.ResqWebApplicationFactory<TEntryPoint>.ConfigureTestServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
