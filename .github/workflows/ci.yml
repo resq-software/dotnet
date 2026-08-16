@@ -176,7 +176,9 @@ jobs:
         run: |
           if [ -n "$VERSION_OVERRIDE" ]; then
             dotnet pack -c Release -o artifacts -p:MinVerVersionOverride="$VERSION_OVERRIDE"
-            dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o artifacts -p:MinVerVersionOverride="$VERSION_OVERRIDE"
+            # The template package doesn't use MinVer (it's a content-only package outside src/),
+            # so set its version directly with -p:Version to track the release being published.
+            dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o artifacts -p:Version="$VERSION_OVERRIDE"
           else
             dotnet pack -c Release -o artifacts
             dotnet pack templates/ResQ.BuildingBlocks.Templates.csproj -c Release -o artifacts
