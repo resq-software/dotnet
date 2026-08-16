@@ -47,6 +47,16 @@ updates:
         patterns:
           - "Meziantou.Analyzer"
           - "Microsoft.CodeAnalysis.*Analyzers"
+    ignore:
+      # FluentAssertions 8 moved to a commercial license (Xceed), and
+      # ResQ.BuildingBlocks.Testing propagates it to consumers — hold on the
+      # last Apache-2.0 line (7.x) so downstream isn't forced onto that license.
+      - dependency-name: "FluentAssertions"
+        versions: [">=8.0.0"]
+      # Hold Microsoft.Extensions.* on the 9.x line while the libraries target
+      # net8.0/net9.0; adopting 10.x forces a 10.x transitive floor on consumers.
+      - dependency-name: "Microsoft.Extensions.*"
+        versions: [">=10.0.0"]
 
   # ---- NuGet: dotnet new template content ----------------------------
   # templates/resq-service/ has its own Directory.Packages.props and is
@@ -79,6 +89,11 @@ updates:
           - "Testcontainers*"
           - "NetArchTest*"
           - "coverlet*"
+    ignore:
+      # Mirror the root hold so the scaffolded service doesn't inherit
+      # FluentAssertions 8's commercial license.
+      - dependency-name: "FluentAssertions"
+        versions: [">=8.0.0"]
 
   # ---- GitHub Actions -------------------------------------------------
   # All 11 actions are SHA-pinned. Dependabot updates SHA pins in place
