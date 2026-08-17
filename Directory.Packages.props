@@ -27,8 +27,8 @@
     <PackageVersion Include="System.Text.Json" Version="9.0.19" />
 
     <!-- Persistence adapter (EF Core, provider-agnostic) -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.19" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.19" />
 
     <!-- Web adapter (net9-only project) -->
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.19" />
@@ -41,7 +41,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.17.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.17.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.17.0" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.10.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.2" />
 
     <!-- Testing (core) -->
@@ -52,7 +52,7 @@
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
 
     <!-- Testing.Integration (net9-only project: Docker / WebApplicationFactory) -->
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.19" />
     <PackageVersion Include="Testcontainers" Version="4.14.0" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
 
