@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <!-- Build / packaging tooling -->
-    <PackageVersion Include="MinVer" Version="6.0.0" />
+    <PackageVersion Include="MinVer" Version="7.0.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.400" />
 
     <!-- Application layer -->
@@ -21,19 +21,19 @@
     <!-- Messaging adapter (broker-agnostic core) -->
     <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.19" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.19" />
-    <PackageVersion Include="Polly.Core" Version="8.5.0" />
+    <PackageVersion Include="Polly.Core" Version="8.7.0" />
     <!-- Transitive security pin: force System.Text.Json off the vulnerable <=8.0.4 line
          (CVE-2024-43485 / GHSA-8g4q-xg66-9fp4). Upgrade on both TFMs, so no CPM downgrade. -->
     <PackageVersion Include="System.Text.Json" Version="9.0.19" />
 
     <!-- Persistence adapter (EF Core, provider-agnostic) -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.19" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.19" />
 
     <!-- Web adapter (net9-only project) -->
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.19" />
     <PackageVersion Include="Asp.Versioning.Http" Version="8.1.1" />
-    <PackageVersion Include="Scalar.AspNetCore" Version="2.0.5" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.16.20" />
 
     <!-- ServiceDefaults (cross-cutting: OpenTelemetry / resilience / discovery) -->
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.17.0" />
@@ -41,7 +41,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.17.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.17.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.17.0" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.10.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.2" />
 
     <!-- Testing (core) -->
@@ -52,7 +52,7 @@
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
 
     <!-- Testing.Integration (net9-only project: Docker / WebApplicationFactory) -->
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.19" />
     <PackageVersion Include="Testcontainers" Version="4.14.0" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
 
@@ -67,7 +67,7 @@
          so they run against the building blocks but never flow to consumers, tests, or samples). -->
     <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
-    <PackageVersion Include="Meziantou.Analyzer" Version="3.0.157" />
+    <PackageVersion Include="Meziantou.Analyzer" Version="3.0.159" />
   </ItemGroup>
 
 </Project>
