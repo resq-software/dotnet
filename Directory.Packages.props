@@ -9,18 +9,18 @@
   <ItemGroup>
     <!-- Build / packaging tooling -->
     <PackageVersion Include="MinVer" Version="7.0.0" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.400" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.401" />
 
     <!-- Application layer -->
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.19" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.19" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.20" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.20" />
     <PackageVersion Include="Scrutor" Version="5.0.1" />
 
     <!-- Messaging adapter (broker-agnostic core) -->
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.19" />
-    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.19" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.20" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.20" />
     <PackageVersion Include="Polly.Core" Version="8.7.0" />
     <!-- Transitive security pin: force System.Text.Json off the vulnerable <=8.0.4 line
          (CVE-2024-43485 / GHSA-8g4q-xg66-9fp4). Upgrade on both TFMs, so no CPM downgrade. -->
@@ -31,7 +31,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.19" />
 
     <!-- Web adapter (net9-only project) -->
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.19" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.20" />
     <PackageVersion Include="Asp.Versioning.Http" Version="8.1.1" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.17.2" />
 
@@ -45,7 +45,7 @@
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.2" />
 
     <!-- Testing (core) -->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
     <PackageVersion Include="FluentAssertions" Version="7.2.2" />
