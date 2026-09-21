@@ -14,7 +14,7 @@
 *.sh        text eol=lf
 
 # gh-aw compiled agentic workflows are generated from the sibling *.md.
-.github/workflows/*.lock.yml linguist-generated=true merge=ours
+.github/workflows/*.lock.yml linguist-generated=true
 
 # Binaries — never normalize.
 *.png       binary
