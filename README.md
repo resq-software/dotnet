@@ -71,5 +71,6 @@ dotnet pack  -c Release -o artifacts
 
 Push a tag: `git tag v0.1.0 && git push --tags`. CI packs and pushes to NuGet (needs the `NUGET_API_KEY` secret + a `nuget` environment).
 
----
+## License
+
 Apache-2.0 · © ResQ Systems, Inc.
