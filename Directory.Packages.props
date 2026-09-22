@@ -53,8 +53,8 @@
 
     <!-- Testing.Integration (net9-only project: Docker / WebApplicationFactory) -->
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.19" />
-    <PackageVersion Include="Testcontainers" Version="4.14.0" />
-    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
+    <PackageVersion Include="Testcontainers" Version="4.15.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.15.0" />
 
     <!-- Sample (samples/Widgets) + its tests -->
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
