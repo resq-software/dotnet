@@ -242,23 +242,28 @@ jobs:
     permissions:
       contents: write # create the release and attach the SBOM
     steps:
+      # The SBOM the publish job generated for the packages it pushed. Fetched
+      # first, so a failure here happens before the Release is public.
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: sbom
       - name: Create GitHub Release from the tag
         # `gh` reads $GH_TOKEN and $GITHUB_REPOSITORY automatically; the tag is
         # passed via env (never `${{ }}` inside run:) to avoid zizmor template
         # injection. --generate-notes builds notes from merged PRs since the
         # previous tag; --verify-tag asserts the ref is a real tag first.
+        # Skipped when the Release already exists, so a re-run after a failed
+        # upload below can finish the job instead of failing here.
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
-        run: >
-          gh release create "$TAG"
-          --title "$TAG"
-          --generate-notes
-          --verify-tag
-      # The SBOM the publish job generated for the packages it pushed.
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: sbom
+        run: |
+          set -eu
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "release $TAG already exists; attaching the SBOM only"
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "$TAG" --generate-notes --verify-tag
+          fi
       - name: Attach the SBOM to the Release
         env:
           GH_TOKEN: ${{ github.token }}
