@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace ResQ.BuildingBlocks.Adapters.Web;
 
 /// <summary>Bounds applied when normalizing paginated requests.</summary>

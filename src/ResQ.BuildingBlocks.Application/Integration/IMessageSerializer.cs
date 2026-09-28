@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace ResQ.BuildingBlocks.Application;
 
 /// <summary>Serializes and deserializes message payloads to and from bytes for transport and the outbox.</summary>

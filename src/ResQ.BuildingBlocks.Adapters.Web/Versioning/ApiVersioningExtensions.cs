@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 using Asp.Versioning;
 using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Builder;

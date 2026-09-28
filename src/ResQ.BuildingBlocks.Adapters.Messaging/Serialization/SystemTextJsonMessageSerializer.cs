@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using ResQ.BuildingBlocks.Application;

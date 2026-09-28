@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace ResQ.BuildingBlocks.Domain;
 
 /// <summary>A domain event: something meaningful that happened inside the domain.</summary>

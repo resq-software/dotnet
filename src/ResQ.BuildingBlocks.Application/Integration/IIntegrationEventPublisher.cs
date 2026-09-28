@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace ResQ.BuildingBlocks.Application;
 
 /// <summary>Publishes integration events onto the transport (broker, in-memory channel, or outbox relay).</summary>

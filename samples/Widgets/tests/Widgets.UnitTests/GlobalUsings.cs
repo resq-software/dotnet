@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 global using FluentAssertions;
 global using NSubstitute;
 global using ResQ.BuildingBlocks.Application;

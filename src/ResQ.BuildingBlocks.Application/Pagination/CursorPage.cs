@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace ResQ.BuildingBlocks.Application;
 
 /// <summary>A page of results addressed by opaque cursors (keyset pagination).</summary>

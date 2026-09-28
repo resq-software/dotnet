@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace Widgets.Api;
 
 /// <summary>A single page of results in HTTP form.</summary>
