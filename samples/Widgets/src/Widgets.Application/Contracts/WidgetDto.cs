@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace Widgets.Application;
 
 /// <summary>A read model projecting a <see cref="Widgets.Domain.Widget"/>.</summary>

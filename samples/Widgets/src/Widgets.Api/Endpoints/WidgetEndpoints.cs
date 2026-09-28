@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 using Microsoft.Extensions.Options;
 using ResQ.BuildingBlocks.Adapters.Web;
 using ResQ.BuildingBlocks.Application;

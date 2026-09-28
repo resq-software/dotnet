@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace ResQ.BuildingBlocks.Domain;
 
 /// <summary>Classifies an <see cref="Error"/> so adapters can map it (e.g. to an HTTP status).</summary>

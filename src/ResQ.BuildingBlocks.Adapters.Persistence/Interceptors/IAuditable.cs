@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace ResQ.BuildingBlocks.Adapters.Persistence;
 
 /// <summary>

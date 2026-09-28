@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace ResQ.BuildingBlocks.Application;
 
 /// <summary>A single page of results addressed by page number and size, with the total row count.</summary>

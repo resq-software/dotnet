@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace Widgets.Domain;
 
 /// <summary>Strongly-typed identity for a <see cref="Widget"/>.</summary>

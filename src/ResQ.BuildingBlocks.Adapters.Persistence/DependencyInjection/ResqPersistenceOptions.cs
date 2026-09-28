@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 namespace ResQ.BuildingBlocks.Adapters.Persistence;
 
 /// <summary>Toggles for the optional pieces of the persistence adapter, set in <c>AddResqPersistence</c>.</summary>
