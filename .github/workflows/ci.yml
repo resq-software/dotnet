@@ -4,7 +4,7 @@
 # Thin CI wrapper (mirrors resq-software/dotnet-sdk). The `gates` job
 # dispatches to the org-wide reusable `required` aggregator in
 # resq-software/.github (dotnet-ci: restore/build/format/test, plus the
-# security scan + CodeQL + repo-standards). The top-level `required`
+# security scan + repo-standards). The top-level `required`
 # job emits the status-check context consumed by the org ruleset
 # `default-branch-baseline`, and additionally gates this repo's
 # NuGet pack and dotnet-new template smoke.
@@ -35,9 +35,10 @@ concurrency:
 
 jobs:
   gates:
-    # Job-scoped permissions: CodeQL needs security-events:write to upload
-    # SARIF; PR metadata read is needed by some scanners. Keeping the
-    # workflow-level grant at contents:read avoids blanket write tokens.
+    # Job-scoped permissions: the reusable's zizmor job needs
+    # security-events:write to upload its SARIF; PR metadata read is needed
+    # by some scanners. Keeping the workflow-level grant at contents:read
+    # avoids blanket write tokens.
     permissions:
       contents: read
       security-events: write
@@ -47,7 +48,28 @@ jobs:
     with:
       lang: dotnet
       dotnet-solution: ResQ.BuildingBlocks.slnx
-      codeql-languages: '["csharp"]'
+      # `codeql-languages` is deliberately omitted. It defaults to "[]",
+      # which skips security-scan's CodeQL job.
+      #
+      # Code-scanning *default setup* is enabled on this repository, so every
+      # advanced-setup upload is rejected: the analyze step logs "Analysis
+      # upload status is failed. CodeQL analyses from advanced configurations
+      # cannot be processed when the default setup is enabled" and ends with
+      # "CodeQL job status was configuration error". The reusable carries
+      # `continue-on-error: true` on that step, and the `##[error]` is emitted
+      # by the Analyze step itself, in its main phase, which is exactly what
+      # that flag swallows. (Only the trailing "CodeQL job status was ..." line
+      # is printed after the step, by init-post; a passing run prints it too,
+      # reading "was success".) So the job still reported success — a
+      # configuration error that had become a permanent green check.
+      #
+      # Unlike the sibling .NET repositories this one has no security.yml, so
+      # this line was the repository's only advanced-CodeQL declaration rather
+      # than a duplicate. Dropping it therefore changes the fallback posture:
+      # if default setup were ever turned off here, no CodeQL would run at all
+      # until it is re-enabled or this input is restored. That is the accepted
+      # trade — default setup is the chosen configuration, and it runs the
+      # broader `extended` query suite that this job never could.
 
   # Repo-specific: verify all eight building-block packages + the template
   # pack cleanly, and publish the artifacts for inspection.
