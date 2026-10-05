@@ -27,8 +27,8 @@
     <PackageVersion Include="System.Text.Json" Version="9.0.19" />
 
     <!-- Persistence adapter (EF Core, provider-agnostic) -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.19" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.19" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.20" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.20" />
 
     <!-- Web adapter (net9-only project) -->
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.20" />
@@ -52,7 +52,7 @@
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
 
     <!-- Testing.Integration (net9-only project: Docker / WebApplicationFactory) -->
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.19" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.20" />
     <PackageVersion Include="Testcontainers" Version="4.15.0" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.15.0" />
 
