@@ -47,21 +47,21 @@
     <!-- Testing (core) -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
     <PackageVersion Include="FluentAssertions" Version="7.2.2" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
 
     <!-- Testing.Integration (net9-only project: Docker / WebApplicationFactory) -->
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.19" />
-    <PackageVersion Include="Testcontainers" Version="4.15.0" />
-    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.15.0" />
+    <PackageVersion Include="Testcontainers" Version="4.16.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.16.0" />
 
     <!-- Sample (samples/Widgets) + its tests -->
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
     <PackageVersion Include="EFCore.NamingConventions" Version="9.0.0" />
     <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
-    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
 
     <!-- Analyzers (dev-only: referenced with PrivateAssets="all" in src/Directory.Build.props,
          so they run against the building blocks but never flow to consumers, tests, or samples). -->
