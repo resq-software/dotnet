@@ -44,7 +44,7 @@ jobs:
       security-events: write
       pull-requests: read
       actions: read
-    uses: resq-software/.github/.github/workflows/required.yml@f4b51a620aa1bf89c0bce4f434b36f92ff7d517d
+    uses: resq-software/.github/.github/workflows/required.yml@9b8f49927aa789aef1a99e5afc4c1e2278b2dfc0
     with:
       lang: dotnet
       dotnet-solution: ResQ.BuildingBlocks.slnx
@@ -81,7 +81,7 @@ jobs:
         with:
           fetch-depth: 0 # MinVer needs full history + tags for versioning
           persist-credentials: false
-      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
       - run: dotnet pack ResQ.BuildingBlocks.slnx -c Release -o artifacts
@@ -98,7 +98,7 @@ jobs:
             dotnet validate package local "$pkg"
             echo "::endgroup::"
           done
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: nuget
           path: artifacts/*.nupkg
@@ -117,7 +117,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
       - name: Pack building blocks to a local feed
@@ -190,7 +190,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
       - name: Pack
@@ -212,14 +212,14 @@ jobs:
       # library's .deps.json lists the dependencies it was built against. The
       # release job attaches it to the GitHub Release.
       - name: Generate SBOM (SPDX JSON)
-        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
         with:
           path: src
           format: spdx-json
           output-file: sbom.spdx.json
           upload-artifact: false
           upload-release-assets: false
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: sbom
           path: sbom.spdx.json
@@ -266,7 +266,7 @@ jobs:
     steps:
       # The SBOM the publish job generated for the packages it pushed. Fetched
       # first, so a failure here happens before the Release is public.
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: sbom
       - name: Create GitHub Release from the tag
